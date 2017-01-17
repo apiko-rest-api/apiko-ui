@@ -1,7 +1,81 @@
 module.exports = {
   server: {
     setup: null,
-    setupOriginal: null
+    setupOriginal: null,
+    core: {
+      collections: {
+        'users': {
+          id: 'INTEGER',
+          username: 'STRING 100',
+          password: 'STRING 100',
+          role: 'STRING 255'
+        },
+        'files': {
+          id: 'INTEGER',
+          mime: 'STRING 100',
+          path: 'TEXT'
+        }
+      },
+      endpoints: {
+        'GET /users/login': {
+          extendable: true,
+          params: {
+            username: {
+              required: true,
+              regex: '^\\S+\\@\\S+\\.\\S+$'
+            },
+            password: {
+              required: true,
+              regex: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'
+            }
+          },
+          collection: 'users'
+        },
+        'GET /users': {
+          extendable: true,
+          collection: 'users'
+        },
+        'GET /users/:id': {
+          extendable: true,
+          params: {
+            id: {
+              required: true,
+              regex: '^\\d{1,10}$'
+            }
+          },
+          collection: 'users'
+        },
+        'POST /users': {
+          extendable: true,
+          params: {
+            username: {
+              required: true,
+              regex: '^\\S+\\@\\S+\\.\\S+$'
+            },
+            password: {
+              required: true,
+              regex: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$'
+            }
+          },
+          collection: 'users'
+        },
+        'GET /files/:id': {
+          extendable: true,
+          params: {
+            id: {
+              required: true,
+              regex: '^\\d{1,10}$'
+            }
+          }
+        },
+        'POST /files': {
+          extendable: true
+        },
+        'GET /captcha': {
+          extendable: true
+        }
+      }
+    }
   },
 
   loading: null,
@@ -113,8 +187,10 @@ module.exports = {
   },
 
   different () {
-    if (JSON.stringify(this.server.setup) === JSON.stringify(this.server.setupOriginal)) {
-      return true
+    if (this.server !== undefined) {
+      if (JSON.stringify(this.server.setup) !== JSON.stringify(this.server.setupOriginal)) {
+        return true
+      }
     }
 
     return false

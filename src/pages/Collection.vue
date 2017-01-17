@@ -1,42 +1,77 @@
 <template>
   <div class="page padded">
     <div class="columns is-mobile">
-      <div class="column is-one-quarter"><CollectionsList></CollectionsList></div>
+      <div class="column is-one-quarter"><CollectionsList ref="list"></CollectionsList></div>
       <div class="column">
         <div class="card">
           <div class="card-content">
             <div class="content">
-              <h1>{{collection}}</h1>
-              <p v-if="collection === 'users'">The user collection is required for user authentication and authorization. It can't be removed.</p>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-top: 20px;">
-          <div class="card-content">
-            <div class="content">
-              <h3>Properties</h3>
-              <table v-if="properties" class="table is-striped">
+              <p class="control has-addons is-pulled-right">
+                <router-link class="button" active-class=" is-primary" :to="propertiesLink" exact>
+                  <span class="icon is-small">
+                    <i class="fa fa-align-left"></i>
+                  </span>
+                  <span>PROPERTIES <span v-if="docs">(STRUCTURE)</span></span>
+                </router-link>
+                <router-link class="button" active-class=" is-primary" :to="dataLink">
+                  <span class="icon is-small">
+                    <i class="fa fa-database"></i>
+                  </span>
+                  <span>CONTENT <span v-if="docs">(DATA)</span></span>
+                </router-link>
+              </p>
+              <h1>{{this.$route.params.id}}</h1>
+              <p v-if="this.$route.params.id === 'users' && docs">The user collection is required for user authentication and authorization. It can't be removed.</p>
+              <p v-if="docs">Imagine properties are columens in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
+              <table class="table is-striped">
                 <thead>
-                  <tr><th>Name</th><th>Database Type</th><th></th></tr>
+                  <tr><th>Name</th><th>Database Type</th></tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(type, name) in properties">
-                    <td>{{name}}</td>
+                  <tr v-for="(type, name) in core">
+                    <td><strong>{{name}}</strong> <span class="tag is-light">core</span></td>
                     <td>{{type}}</td>
-                    <td></td>
+                  </tr>
+                  <tr v-for="(type, name) in custom">
+                    <td><strong>{{name}}</strong></td>
+                    <td>{{type}}</td>
                   </tr>
                 </tbody>
               </table>
-              <p v-else>No properties in this collection. Time to add some.</p>
-              <button class="button is-primary is-small"><span class="icon"><i class="fa fa-plus-circle"></i></span><span>ADD PROPERTY</span></button>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-top: 20px;">
-          <div class="card-content">
-            <div class="content">
-              <h3>Data</h3>
-              <p v-if="setupsDifferent">In order to manually update data on this server, the server's setup (which includes database structure) must be updated first. Please save all changes made to this server's setup using the SAVE SETUP button in the menu bar.</p>
+              <h5>Add / Change Property</h5>
+              <p v-if="docs">Input an existing property name to change it or a new property name to add a new property to this collection.</p>
+              <form ref="editForm" @submit.prevent="edit">
+                <div class="control is-grouped">
+                  <p class="control is-expanded">
+                    <input v-model="editPropertyName" class="input" type="text" placeholder="Lowercase name, e.g.: 'author'">
+                  </p>
+                  <p class="control has-addons">
+                    <span class="select">
+                      <select v-model="editPropertyType">
+                        <option v-for="(lengths, type) in availableTypes">{{type}}</option>
+                      </select>
+                    </span>
+                    <input v-model="editPropertyTypeLength" class="input" type="text" placeholder="Length">
+                  </p>
+                  <p class="control">
+                    <button type="submit" class="button is-primary"><span class="icon"><i class="fa fa-plus-circle"></i></span><span>ADD</span></button>
+                  </p>
+                </div>
+                <p>&nbsp;<small v-if="typeDescription">{{typeDescription}}</small></p>
+              </form>
+              <div v-if="docs" style="margin-top: 20px;">
+                <h4>Examples</h4>
+                <p>Not sure about types? Here are some examples:</p>
+                <ul>
+                  <li>Article content - TEXT (default lenght)</li>
+                  <li>Article title - STRING (default length)</li>
+                  <li>Unix timestamp - INT (default lenght)</li>
+                  <li>Any kind of checkboxes or true/false values - BOOLEAN (default lenght)</li>
+                  <li>Latitude - DECIMAL (10,8), longitude - DECIMAL (11, 8)</li>
+                  <li>Longitude - DECIMAL (11, 8)</li>
+                  <li>Money - DECIMAL (19,4)</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -49,56 +84,119 @@
 import CollectionsList from '../components/CollectionsList'
 
 export default {
+  props: ['docs'],
   components: {
     CollectionsList
   },
+  data () {
+    return {
+      availableTypes: {
+        INTEGER: '1-2147483647',
+        CHAR: '1-255',
+        STRING: '1-255',
+        TEXT: 'tiny,medium,long',
+        BIGINT: '9223372036854775807',
+        FLOAT: '',
+        DOUBLE: '',
+        DECIMAL: '',
+        BOOLEAN: '',
+        TIME: '',
+        DATE: '',
+        DATEONLY: '',
+        BLOB: 'tiny,medium,long',
+        ENUM: ''
+      },
+
+      editPropertyName: '',
+      editPropertyType: 'INTEGER',
+      editPropertyTypeLength: '',
+
+      custom: null
+    }
+  },
   computed: {
-    properties () {
-      var p = null
-
-      // reflect core properties if this collection is core
-      switch (this.$route.params.id) {
-        case 'users':
-          p = {
-            id: 'INTEGER',
-            username: 'STRING 100',
-            password: 'STRING 100'
-          }
-          break
-      }
-
-      var custom = this.customProperties()
-
-      if (custom) {
-        if (!p) {
-          p = custom
-        } else {
-          p = {...custom}
-        }
-      }
-
-      return p
-    },
-    collection () {
-      return this.$route.params.id
-    },
     setupsDifferent () {
       return !window.model.different()
+    },
+    typeDescription () {
+      var desc = ''
+
+      switch (this.editPropertyType) {
+        case 'INTEGER': desc = 'Integer number, length ' + this.availableTypes.INTEGER + ' or empty for default.'; break
+        case 'STRING': desc = 'A variable length string (VARCHAR), length ' + this.availableTypes.STRING + ' or empty for default (255).'; break
+        case 'CHAR': desc = 'A fixed length string, length ' + this.availableTypes.CHAR + ' or empty for default (255).'; break
+        case 'TEXT': desc = 'Longer string (e.g. for articles), length \'' + this.availableTypes.TEXT.split(',').join('\', \'') + '\' or empty for default.'; break
+        case 'BIGINT': desc = 'An attribute defined as BIGINT will be treated like a string in order to prevent precision loss. Leave the length empty.'; break
+        case 'FLOAT': desc = 'Floating point number (4-byte precision), comma-separated lengths, e.g.: 5,2'; break
+        case 'DOUBLE': desc = 'Floating point number (8-byte precision), comma-separated lengths, e.g.: 5,2'; break
+        case 'DECIMAL': desc = 'Decimal number, comma-separated lengths, e.g.: 5,2'; break
+        case 'BOOLEAN': desc = 'A Boolean or TINYINT, depending on database. Leave length empty.'; break
+        case 'TIME': desc = 'A TIME column. Leave length empty.'; break
+        case 'DATE': desc = 'A DATETIME column. Leave length empty.'; break
+        case 'DATEONLY': desc = 'A date only column. Leave length empty.'; break
+        case 'BLOB': desc = 'Binary storage (e.g. for files), length \'' + this.availableTypes.BLOB.split(',').join('\', \'') + '\' or empty for default.'; break
+        case 'ENUM': desc = 'Enumeration, comma-separated allowed values, e.g.: Tokyo,Bogota,Prague'; break
+      }
+
+      return desc
+    },
+    core () {
+      if (window.model.server.core.collections[this.$route.params.id]) {
+        return window.model.server.core.collections[this.$route.params.id]
+      }
+
+      return { id: 'INTEGER' }
+    },
+    dataLink () {
+      return '/collections/' + this.$route.params.id + '/data'
+    },
+    propertiesLink () {
+      return '/collections/' + this.$route.params.id
     }
   },
   methods: {
-    customProperties () {
-      if (window.model.server.setup.collections) {
-        if (window.model.server.setup.collections.users) {
-          return window.model.server.setup.collections.users
-        }
+    edit () {
+      if (this.custom[this.editPropertyName]) {
+        console.log('Editing an existing property', this.editPropertyName)
+      } else {
+        console.log('Creating a new property', this.editPropertyName)
       }
 
-      return null
+      this.custom[this.editPropertyName] = this.editPropertyType + (this.editPropertyTypeLength ? ' ' + this.editPropertyTypeLength : '')
+
+      this.$refs.list.$forceUpdate()
+      this.$forceUpdate()
+      this.$parent.setupChanged()
+      this.$refs.editForm.reset()
     }
+  },
+  beforeCreate () {
+    console.log('Checking if collections and this collection objects exist...')
+
+    if (!window.model.server.setup.collections) {
+      console.log('Creating the collections object.')
+      window.model.server.setup.collections = {}
+      this.$parent.setupChanged()
+    }
+
+    if (!window.model.server.setup.collections[this.$route.params.id]) {
+      if (['users', 'files'].indexOf(this.$route.params.id) < 0) {
+        console.log('Creating the actual collection.')
+        window.model.server.setup.collections[this.$route.params.id] = {}
+        this.$parent.setupChanged()
+      }
+    }
+  },
+  created () {
+    console.log('Pointing this.custom to window.model.server.setup.collections.' + this.$route.params.id)
+    this.custom = window.model.server.setup.collections[this.$route.params.id]
   }
 }
 </script>
 
 <style scoped>
+h1 {
+  margin-top: 0 !important;
+  text-transform: uppercase;
+}
 </style>

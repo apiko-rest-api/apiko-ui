@@ -1,17 +1,24 @@
 <template>
   <div class="page padded">
-    <div class="card">
+    <div class="content">
+      <h1 style="text-align: center;">Welcome to Apiko!</h1>
+    </div>
+    <div v-if="docs" class="card">
       <div class="card-content">
         <div class="content">
-          <h1>Welcome to Apiko!</h1>
           <div class="columns is-mobile">
+            <div class="column">
+              <h3>How Does it Work</h3>
+              <p>Each Apiko REST API consists of some data and a way to work with them. The data are stored in collections (database tables) and can be accessed and edited using URL endpoints. Some endpoints are generated automatically according to the colletions' structure (and can be modified), other endpoints can be created manually (with a custom handler code).</p>
+            </div>
             <div class="column">
               <h3>Workflow</h3>
               <ol>
-                <li>Create a collection (database table) for your data. Name it e.g. 'posts' and give it some properties.</li>
-                <li>Once you are happy with the collection, click the 'Generate Endpoints' button.</li>
-                <li>Save this server's setup using the SAVE button, which appears in the menu bar whenever you change anything.</li>
-                <li>Either use the endpoints as they get generated or alter their behavior using a custom handler.</li>
+                <li>Imagine what data you will need to store.</li>
+                <li>Create any number of collections (database tables) accordingly in the <em>Collections</em> menu tab.</li>
+                <li>Then head to the <em>Endpoints</em> menu tab where some endpoints are already pre-generated and others can be added.</li>
+                <li>Save the whole collections and endpoints setup using the SAVE button, which appears in the menu bar whenever you change anything.</li>
+                <li>Use the API.</li>
               </ol>
               <router-link class="button is-primary" to="collections">
                 <span>GET STARTED</span>
@@ -21,13 +28,30 @@
               </router-link>
             </div>
             <div class="column">
-              <h3>Saving Setup</h3>
-              <p>When this UI successfully connects to an Apiko server first time, it downloads the server's setup and create's its copy in the memory. You can then feel free to edit anything around this UI without having the server immediately affected by the changes.</p>
-              <p>Once you make some changes, two buttons will appear in the menu bar - SAVE and RESTORE. The SAVE button will push the changes to the server, which will also reload the server. Use the SAVE button whenever you are happy with the changes you've made to the server's setup using this UI. The RESTORE button will discard all changes you have made since you have connected to the server last time and started editing.</p>
-              <h5>In Case of Emergency</h5>
-              <p>The original setup of the server is held in the memory until you close this UI. If you SAVE a new setup and the server stops working for any reason, you can always RESTORE &amp; SAVE, which will rewrite the changes you have SAVEd. The server's data may still be affected through. Do regular backups and develop on your local machine rather than in production environment.</p>
+              <h3>Saving Server's Setup</h3>
+              <p>This UI has successfully connected to an Apiko server and has downloaded its setup. Now you can change the setup by editing collections and endpoitns and <strong>SAVE</strong> and <strong>RESTORE</strong> buttons will appear in the menu bar once you do so. <strong>SAVE</strong> uploades the new setup back and reloads the server. <strong>RESTORE</strong> reverts the changes back.</p>
+              <h4>In Case of Emergency</h4>
+              <p>The original setup of the server is held in the memory until you close this UI. If you <strong>SAVE</strong> and the server gets screwed, you can always <strong>RESTORE</strong> &amp; <strong>SAVE</strong> over, which will hopefully restore the server to its original setup.</p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-content">
+        <div class="content" style="text-align: center">
+          <router-link class="button is-big is-primary" active-class="is-active" to="/collections">
+            <span class="icon">
+              <i class="fa fa-database"></i>
+            </span>
+            <span>CREATE A COLLECTION</span>
+          </router-link>
+          <router-link class="button is-big is-primary" active-class="is-active" to="/endpoints">
+            <span class="icon">
+              <i class="fa fa-map-signs"></i>
+            </span>
+            <span>CREATE AN ENDPOINT</span>
+          </router-link>
         </div>
       </div>
     </div>
@@ -36,6 +60,7 @@
 
 <script>
 export default {
+  props: ['docs']
 }
 </script>
 

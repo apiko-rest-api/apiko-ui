@@ -16,6 +16,7 @@ import Endpoint from './pages/Endpoint'
 import Endpoints from './pages/Endpoints'
 import Reference from './pages/Reference'
 import Documentation from './pages/Documentation'
+import CollectionData from './pages/CollectionData'
 
 // API server root
 axios.defaults.baseURL = 'http://localhost:5000'
@@ -31,8 +32,10 @@ const router = new VueRouter({
     { path: '/dashboard', component: Dashboard, meta: { verification: true, menu: true } },
     { path: '/collections', component: Collections, meta: { verification: true, menu: true } },
     { path: '/collections/:id', component: Collection, meta: { verification: true, menu: true } },
+    { path: '/collections/:id/data', component: CollectionData, meta: { verification: true, menu: true } },
     { path: '/endpoints', component: Endpoints, meta: { verification: true, menu: true } },
-    { path: '/endpoint/:id', component: Endpoint, meta: { verification: true, menu: true } },
+    { path: '/endpoints/:id', component: Endpoint, meta: { verification: true, menu: true } },
+    { path: '/endpoints/:id/reference', component: Endpoint, meta: { verification: true, menu: true } },
     { path: '/reference', component: Reference, meta: { verification: true, menu: true } },
 
     { path: '/', redirect: '/dashboard' }

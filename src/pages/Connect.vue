@@ -30,7 +30,7 @@
       <p class="control">
         <input v-model="secret" class="input" type="text" placeholder="The secret from apiko.json (optional)">
       </p>
-      <button type="submit" :class="buttonClasses" style="text-align: center;"><span>CONNECT</span><span class="icon"><i class="fa fa-chevron-circle-right"></i></span></button>
+      <button type="submit" :class="buttonClasses"><span>CONNECT</span><span class="icon"><i class="fa fa-chevron-circle-right"></i></span></button>
     </form>
   </div>
 </template>
@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     buttonClasses () {
-      return (this.isConnecting ? 'button is-primary is-loading' : 'button is-primary')
+      return (this.isConnecting ? 'button is-primary is-pulled-right is-loading' : 'button is-primary is-pulled-right')
     }
   },
   methods: {
@@ -93,7 +93,7 @@ export default {
         }
 
         // redirect to the dashboard
-        window.location.href = '#/'
+        this.$router.push('/')
       }).catch(error => {
         this.isConnecting = false
 

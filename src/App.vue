@@ -2,15 +2,15 @@
   <div id="app">
     <Loading></Loading>
 
-    <div class="card" v-if="displayMenu" style="color: #bbbbbb">
+    <div class="card text-muted" v-if="displayMenu">
       <div class="card-content" style="padding: 4px 10px 4px 10px;">
-        <span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-bar-chart"></i></span> <span>11036 requests past 30 days</span>
+        <span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-bar-chart"></i></span> <span>318 requests past 30 days</span>
         <span class="is-pulled-right"><span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-plug"></i></span> Connected to: <span>{{base}}</span></span>
       </div>
     </div>
 
     <nav class="nav has-shadow" v-if="displayMenu">
-      <router-link class="nav-item" to="dashboard">
+      <router-link class="nav-item" to="/dashboard">
         <img src="./assets/inappicon52x25.svg" alt="Apiko">
       </router-link>
 
@@ -19,28 +19,28 @@
           <span class="icon">
             <i class="fa fa-database"></i>
           </span>
-          <span>Collections (DB Tables)</span>
+          <span>Collections <span v-if="displayDocs">(DB Tables)</span></span>
         </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/endpoints">
           <span class="icon">
             <i class="fa fa-map-signs"></i>
           </span>
-          <span>Endpoints (URLs)</span>
+          <span>Endpoints <span v-if="displayDocs">(URLs)</span></span>
         </router-link>
       </div>
 
       <div v-if="setupsDifferent" class="nav-center">
-        <a class="nav-item button is-primary">
-          <span class="icon">
-            <i class="fa fa-save"></i>
-          </span>
-          <span>SAVE</span>
-        </a>
-        <a class="nav-item button is-danger">
+        <a class="nav-item button is-small" style="margin-right: 12px;">
           <span class="icon">
             <i class="fa fa-refresh"></i>
           </span>
-          <span>RESTORE</span>
+          <span v-if="displayDocs">RESTORE</span>
+        </a>
+        <a class="nav-item button is-primary is-small">
+          <span class="icon">
+            <i class="fa fa-save"></i>
+          </span>
+          <span v-if="displayDocs">SAVE</span>
         </a>
       </div>
 
@@ -59,7 +59,7 @@
           <span class="icon">
             <i class="fa fa-file-text"></i>
           </span>
-          <span>This API's Reference</span>
+          <span><span v-if="displayDocs">This API's</span> Reference</span>
         </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/documentation">
           <span class="icon">
@@ -67,11 +67,17 @@
           </span>
           <span>Apiko Docs</span>
         </router-link>
+        <a class="nav-item" @click="toggleDocs" title="Toggle In-place Documentation">
+          <span class="icon">
+            <i v-if="displayDocs" class="fa fa-question-circle"></i>
+            <i v-else class="fa fa-question-circle-o"></i>
+          </span>
+        </a>
       </div>
     </nav>
 
     <transition name="fade">
-      <router-view></router-view>
+      <router-view :docs="displayDocs" @setup-change="setupChanged()"></router-view>
     </transition>
   </div>
 </template>
@@ -85,7 +91,9 @@ export default {
   },
   data () {
     return {
-      menuActive: false
+      menuActive: false,
+      displayDocs: true,
+      setupsDifferent: false
     }
   },
   computed: {
@@ -94,17 +102,29 @@ export default {
     },
     base () {
       return window.model.storedValue('base')
-    },
-    setupsDifferent () {
-      return !window.model.different()
     }
   },
   methods: {
     toggleMenu () {
       return !this.menuActive
+    },
+    toggleDocs () {
+      this.displayDocs = !this.displayDocs
+
+      if (this.displayDocs) {
+        window.localStorage.removeItem('hide-docs')
+      } else {
+        window.localStorage.setItem('hide-docs', 'true')
+      }
+    },
+    setupChanged () {
+      this.setupsDifferent = window.model.different()
     }
   },
   mounted () {
+    if (window.model.storedValue('hide-docs', false)) {
+      this.displayDocs = false
+    }
   }
 }
 </script>
@@ -112,7 +132,8 @@ export default {
 <style>
 html, 
 body {
-    height: 100%;
+  display: block;
+  min-height: 100vh;
 }
 
 body {
@@ -133,7 +154,7 @@ body {
 }
 
 .page {
-  /* margin-top: 54px; */
+  padding-bottom: 50px;
 }
 
 .page.padded {
@@ -151,9 +172,10 @@ nav a span:last-child {
   margin-left: 6px;
 }
 
-.content {
-  background-color: #ffffff;
-  padding: 10px;
+/* content */
+
+.text-muted {
+  color: #bbbbbb;
 }
 
 @media screen and (min-width: 800px) {
@@ -167,6 +189,12 @@ nav a span:last-child {
 @media screen and (min-width: 1200px) {
   .page.centered {
     width: 35%;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none;
   }
 }
 </style>
