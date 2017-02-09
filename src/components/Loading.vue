@@ -8,13 +8,10 @@
 export default {
   components: {
   },
-  data () {
-    return {
-      show: false
+  computed: {
+    show () {
+      return this.$store.state.loading
     }
-  },
-  mounted () {
-    window.model.loading = this
   }
 }
 </script>
@@ -27,7 +24,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 1031;
 }
 
 #loading img {

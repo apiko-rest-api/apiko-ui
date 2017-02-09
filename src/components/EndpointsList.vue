@@ -21,20 +21,20 @@ export default {
   },
   data () {
     return {
-      collections: window.model.server.setup.collections
+      collections: this.$store.state.setup.collections
     }
   },
   computed: {
     coreEndpoints () {
-      if (window.model.server.core.endpoints) {
-        return window.model.server.core.endpoints
+      if (this.$store.state.core.endpoints) {
+        return this.$store.state.core.endpoints
       }
 
       return null
     },
     endpoints () {
-      if (window.model.server.setup.endpoints) {
-        return window.model.server.setup.endpoints
+      if (this.$store.state.setup.endpoints) {
+        return this.$store.state.setup.endpoints
       }
 
       return null
@@ -51,7 +51,7 @@ export default {
       return '/endpoints/' + encodeURIComponent(endpoint)
     },
     isCore (endpoint) {
-      if (window.model.server.core.endpoints[endpoint]) {
+      if (this.$store.state.core.endpoints[endpoint]) {
         return true
       }
       return false

@@ -2,10 +2,15 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Vuex from 'vuex'
 import axios from 'axios'
+window.axios = axios
 
-import Model from './Model'
-window.model = Model
+import store from './store'
+window.store = store
+
+import helpers from './helpers'
+window.helpers = helpers
 
 import App from './App'
 import Connect from './pages/Connect'
@@ -20,9 +25,9 @@ import CollectionData from './pages/CollectionData'
 
 // API server root
 axios.defaults.baseURL = 'http://localhost:5000'
-window.axios = axios
 
 Vue.use(VueRouter)
+Vue.use(Vuex)
 
 const router = new VueRouter({
   routes: [
@@ -46,7 +51,7 @@ router.beforeEach((to, from, next) => {
   console.log('Redirecting:', from.fullPath, '=>', to.fullPath)
 
   if (to.matched.some(record => record.meta.verification)) {
-    if (!window.model.verified()) {
+    if (!window.helpers.verified()) {
       console.log('Redirecting to the Connect page, because this page (' + to.fullPath + ') needs connection info and there\'s none.')
       next('/connect')
     }
@@ -58,7 +63,7 @@ router.beforeEach((to, from, next) => {
 /* eslint-disable no-new */
 new Vue({
   router,
-  Model,
+  store,
   el: '#app',
   render: h => h(App)
 })

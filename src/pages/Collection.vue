@@ -25,16 +25,18 @@
               <p v-if="docs">Imagine properties are columens in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
               <table class="table is-striped">
                 <thead>
-                  <tr><th>Name</th><th>Database Type</th></tr>
+                  <tr><th>Name</th><th>Database Type</th><th></th></tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(type, name) in core">
-                    <td><strong>{{name}}</strong> <span class="tag is-light">core</span></td>
-                    <td>{{type}}</td>
+                  <tr v-for="(prop, name) in core">
+                    <td><strong>{{name}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
+                    <td>{{prop.type}}</td>
+                    <td><span class="tag is-light">core</span></td>
                   </tr>
-                  <tr v-for="(type, name) in custom">
-                    <td><strong>{{name}}</strong></td>
-                    <td>{{type}}</td>
+                  <tr v-for="(prop, name) in custom">
+                    <td><strong>{{name}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
+                    <td>{{prop.type}}</td>
+                    <td><button @click="remove(name)" class="button is-danger is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button></td>
                   </tr>
                 </tbody>
               </table>
@@ -58,6 +60,9 @@
                   </p>
                 </div>
                 <p>&nbsp;<small v-if="typeDescription">{{typeDescription}}</small></p>
+                <p class="control is-expanded">
+                  <input v-model="editPropertyComment" class="input" type="text" placeholder="Optional comment">
+                </p>
               </form>
               <div v-if="docs" style="margin-top: 20px;">
                 <h4>Examples</h4>
@@ -110,13 +115,14 @@ export default {
       editPropertyName: '',
       editPropertyType: 'INTEGER',
       editPropertyTypeLength: '',
+      editPropertyComment: '',
 
-      custom: null
+      custom: this.$store.state.setup.collections[this.$route.params.id].params
     }
   },
   computed: {
     setupsDifferent () {
-      return !window.model.different()
+      return !this.$parent.setupsDifferent()
     },
     typeDescription () {
       var desc = ''
@@ -141,11 +147,18 @@ export default {
       return desc
     },
     core () {
-      if (window.model.server.core.collections[this.$route.params.id]) {
-        return window.model.server.core.collections[this.$route.params.id]
+      if (this.$store.state.core.collections[this.$route.params.id]) {
+        return this.$store.state.core.collections[this.$route.params.id]
       }
 
-      return { id: 'INTEGER' }
+      return {
+        id: {
+          type: 'INTEGER'
+        },
+        owner: {
+          type: 'INTEGER'
+        }
+      }
     },
     dataLink () {
       return '/collections/' + this.$route.params.id + '/data'
@@ -162,34 +175,34 @@ export default {
         console.log('Creating a new property', this.editPropertyName)
       }
 
-      this.custom[this.editPropertyName] = this.editPropertyType + (this.editPropertyTypeLength ? ' ' + this.editPropertyTypeLength : '')
+      var prop = {
+        type: (this.editPropertyType + (this.editPropertyTypeLength ? ' ' + this.editPropertyTypeLength : ''))
+      }
+
+      if (this.editPropertyComment) {
+        prop.comment = this.editPropertyComment
+      }
+
+      this.custom[this.editPropertyName] = prop
+      this.$refs.list.$forceUpdate()
+      this.$forceUpdate()
+      this.$refs.editForm.reset()
+      this.$parent.setupsChanged()
+    },
+    remove () {
+      if (this.custom[this.editPropertyName]) {
+        delete this.custom[this.editPropertyName]
+      }
 
       this.$refs.list.$forceUpdate()
       this.$forceUpdate()
-      this.$parent.setupChanged()
-      this.$refs.editForm.reset()
-    }
-  },
-  beforeCreate () {
-    console.log('Checking if collections and this collection objects exist...')
-
-    if (!window.model.server.setup.collections) {
-      console.log('Creating the collections object.')
-      window.model.server.setup.collections = {}
-      this.$parent.setupChanged()
-    }
-
-    if (!window.model.server.setup.collections[this.$route.params.id]) {
-      if (['users', 'files'].indexOf(this.$route.params.id) < 0) {
-        console.log('Creating the actual collection.')
-        window.model.server.setup.collections[this.$route.params.id] = {}
-        this.$parent.setupChanged()
-      }
+      this.$parent.setupsChanged()
     }
   },
   created () {
-    console.log('Pointing this.custom to window.model.server.setup.collections.' + this.$route.params.id)
-    this.custom = window.model.server.setup.collections[this.$route.params.id]
+    this.$store.state.setup.collections[this.$route.params.id] = this.$store.state.setup.collections[this.$route.params.id] || {}
+
+    this.custom = this.$store.state.setup.collections[this.$route.params.id]
   }
 }
 </script>

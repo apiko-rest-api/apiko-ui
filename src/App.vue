@@ -30,13 +30,13 @@
       </div>
 
       <div v-if="setupsDifferent" class="nav-center">
-        <a class="nav-item button is-small" style="margin-right: 12px;">
+        <a @click="setupRestore()" class="nav-item button is-small" style="margin-right: 12px;">
           <span class="icon">
             <i class="fa fa-refresh"></i>
           </span>
           <span v-if="displayDocs">RESTORE</span>
         </a>
-        <a class="nav-item button is-primary is-small">
+        <a @click="setupSave()" class="nav-item button is-primary is-small">
           <span class="icon">
             <i class="fa fa-save"></i>
           </span>
@@ -92,8 +92,7 @@ export default {
   data () {
     return {
       menuActive: false,
-      displayDocs: true,
-      setupsDifferent: false
+      displayDocs: true
     }
   },
   computed: {
@@ -101,7 +100,14 @@ export default {
       return this.$route.meta.menu
     },
     base () {
-      return window.model.storedValue('base')
+      return window.helpers.storedValue('base')
+    },
+    setupsDifferent () {
+      if (JSON.stringify(this.$store.state.setup) !== JSON.stringify(this.$store.state.originalSetup)) {
+        return true
+      }
+
+      return false
     }
   },
   methods: {
@@ -117,12 +123,32 @@ export default {
         window.localStorage.setItem('hide-docs', 'true')
       }
     },
-    setupChanged () {
-      this.setupsDifferent = window.model.different()
+    setupSave () {
+      console.log('Saving the setup...')
+
+      var params = {
+        setup: this.$store.state.setup
+      }
+
+      if (window.helpers.storedValue('secret', false)) {
+        params.secret = window.helpers.storedValue('secret')
+      }
+
+      this.$store.dispatch('put', {
+        path: '/apiko/setup',
+        args: params
+      })
+    },
+    setupRestore () {
+      console.log('Restoring the setup...')
+
+      if (window.helpers.different()) {
+        this.$store.state.setup = JSON.parse(JSON.stringify(this.$store.state.originalSetup)) // a dirty hack to duplicate object
+      }
     }
   },
   mounted () {
-    if (window.model.storedValue('hide-docs', false)) {
+    if (window.helpers.storedValue('hide-docs', false)) {
       this.displayDocs = false
     }
   }

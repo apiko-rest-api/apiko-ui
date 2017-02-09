@@ -79,27 +79,50 @@ export default {
 
       console.log('Connecting to:', url, (secret ? 'with a secret...' : 'without a secret...'))
 
-      window.model.get(url + '/apiko/setup' + secretParam).then((response) => {
+      this.$store.dispatch('get', {
+        path: url + '/apiko/setup' + secretParam
+      }).then((response) => {
         this.isConnecting = false
         this.error = ''
 
         console.log('Successfully connected.')
-        window.model.server.setup = response.data
-        window.model.server.setupOriginal = JSON.parse(JSON.stringify(window.model.server.setup)) // a dirty hack to duplicate object
+        this.$store.commit('updateSetup', response.data)
+
+        // make sure the endpoints and collections objects exist
+        if (!this.$store.state.setup.endpoints) {
+          this.$store.state.setup.endpoints = {}
+        }
+
+        if (!this.$store.state.setup.collections) {
+          this.$store.state.setup.collections = {}
+        }
+
+        this.$store.state.originalSetup = JSON.parse(JSON.stringify(this.$store.state.setup)) // a dirty hack to duplicate object
 
         window.localStorage.setItem('base', url)
+        window.axios.defaults.baseURL = url
         if (secret) {
           window.localStorage.setItem('secret', secret)
         }
 
-        // redirect to the dashboard
-        this.$router.push('/')
+        this.$store.dispatch('get', {
+          path: url + '/apiko/core' + secretParam
+        }).then((responseCore) => {
+          this.$store.commit('updateCore', responseCore.data)
+
+          // redirect to the dashboard
+          this.$router.push('/')
+        }).catch(error => {
+          console.log('Tried to get core, but failed.', error)
+          this.error = 'Tried downloading the core collections and endpoints, but failed. Try restarting the server and reloading this UI.'
+        })
       }).catch(error => {
         this.isConnecting = false
 
         if (error.response) {
           if (error.response.status === 401) {
             window.localStorage.setItem('base', url)
+            window.axios.defaults.baseURL = url
 
             this.error = 'Tried connecting to ' + url + ' and succeed, but wasn\'t able to download the server\'s setup, because it is protected. Please enter your server\'s secret found in the file apiko.json in the root of your server.'
 
@@ -135,8 +158,8 @@ export default {
     }
   },
   mounted () {
-    var savedBase = window.model.storedValue('base', false)
-    var savedSecret = window.model.storedValue('secret', false)
+    var savedBase = window.helpers.storedValue('base', false)
+    var savedSecret = window.helpers.storedValue('secret', false)
 
     if (savedBase) {
       if (savedSecret) {

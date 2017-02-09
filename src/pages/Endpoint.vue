@@ -24,17 +24,13 @@
               <div v-if="isParamsLink">
                 <p v-if="coreEndpoint && docs">Core endpoint, can't be removed. You can only alter the parameters.</p>
                 <h2>Access</h2>
-                <p v-if="docs">Usage of each custom endpoint can be restricted by login or specific roles. Cick the <strong>URESTRICTED</strong> button to require login and then type-in a comma-separated list of required roles. A user must have all these required roles included in their <strong>role</strong> property (column).</p>
+                <p v-if="docs">Usage of each custom endpoint can be restricted by login or specific roles. Click the <strong>URESTRICTED</strong> button to require login and then type-in a comma-separated list of roles. A user must have <strong>one of</strong> these roles included in their <strong>role</strong> property (column) in order to be able to access this endpoint.</p>
                 <div class="control is-grouped">
                   <p class="control has-addons is-expanded">
                     <a v-if="roles && login" @click="toggle('login')" class="button is-primary">RESTRICTED FOR</a>
                     <a v-if="login && !roles" @click="toggle('login')" class="button is-primary">REQUIRES LOGIN</a>
                     <a v-if="!login" @click="toggle('login')" class="button">UNRESTRICTED</a>
                     <input v-model="roles" class="input is-expanded" type="text" :disabled="rolesDisabled" placeholder="Comma-separated list of roles, e.g.: 'moderator,admin'">
-                  </p>
-                  <p class="control">
-                    <a @click="toggle('captcha')" v-if="captcha" class="button is-primary">CAPTCHA PROTECTED</a>
-                    <a @click="toggle('captcha')" v-else class="button">NO CAPTCHA</a>
                   </p>
                 </div>
                 <h5 v-if="docs">Example</h5>
@@ -50,7 +46,7 @@
                     <tr><td><code>4</code></td><td>...</td><td><span class="text-muted">(empty)</span></td></tr>
                   </tbody>
                 </table>
-                <p v-if="docs">If you would restrict this endpoint by <code>moderator,storemanager</code>, only user <strong>1</strong> could use this endpoint, others would get the <em>403: Forbidden</em> HTTP error.</p>
+                <p v-if="docs">If you would restrict this endpoint by <code>admin,moderator</code>, only users <strong>1 and 3</strong> could use this endpoint, others would get the <em>403: Forbidden</em> HTTP error.</p>
                 <h5 v-if="docs">Catpcha</h5>
                 <p v-if="docs">Endpoints can also be protected by a captcha by switching the <strong>NO CAPTCHA</strong> button. In case of captcha protection, answer to the catpcha image must be supplied in the captcha parameter with each call to this endpoint. A captcha image can be retrieved before calling this endpoint from <code>GET /captcha</code>.</p>
                 <h2>Parameters</h2>
@@ -183,7 +179,6 @@ export default {
 
       login: false,
       roles: '',
-      captcha: false,
 
       currentRegexDesc: '',
 
@@ -201,22 +196,22 @@ export default {
   },
   computed: {
     coreEndpoint () {
-      if (window.model.server.core.endpoints[this.$route.params.id] < 0) {
+      if (this.$store.state.core.endpoints[this.$route.params.id] < 0) {
         return false
       }
       return true
     },
     core () {
-      if (window.model.server.core.endpoints[this.$route.params.id].params) {
-        return window.model.server.core.endpoints[this.$route.params.id].params
+      if (this.$store.state.core.endpoints[this.$route.params.id].params) {
+        return this.$store.state.core.endpoints[this.$route.params.id].params
       }
 
       return null
     },
     custom () {
       console.log('Custom', this.$route.params.id)
-      if (window.model.server.setup.endpoints[this.$route.params.id].params) {
-        return window.model.server.setup.endpoints[this.$route.params.id].params
+      if (this.$store.state.setup.endpoints[this.$route.params.id].params) {
+        return this.$store.state.setup.endpoints[this.$route.params.id].params
       }
       return null
     },
@@ -264,17 +259,17 @@ export default {
         required: this.editParamRequired
       }
 
-      if (!window.model.server.setup.endpoints[this.$route.params.id].params) {
-        window.model.server.setup.endpoints[this.$route.params.id].params = {}
+      if (!this.$store.state.setup.endpoints[this.$route.params.id].params) {
+        this.$store.state.setup.endpoints[this.$route.params.id].params = {}
       }
 
-      window.model.server.setup.endpoints[this.$route.params.id].params[this.editParamName] = param
+      this.$store.state.setup.endpoints[this.$route.params.id].params[this.editParamName] = param
 
-      console.log('New params:', window.model.server.setup.endpoints[this.$route.params.id].params)
+      console.log('New params:', this.$store.state.setup.endpoints[this.$route.params.id].params)
 
       this.$forceUpdate()
-      this.$parent.setupChanged()
       this.$refs.list.$forceUpdate()
+      this.$parent.setupsChanged()
       this.$refs.editForm.reset()
     }
   },
@@ -284,20 +279,13 @@ export default {
     }
   },
   beforeCreate () {
-    console.log('Checking if endpoints and this endpoint objects exist...')
+    console.log('Checking if this endpoint objects exist...')
 
-    if (!window.model.server.setup.endpoints) {
-      console.log('Creating the endpoints object.')
-      window.model.server.setup.endpoints = {}
-      this.$parent.setupChanged()
-    }
-
-    if (!window.model.server.setup.endpoints[this.$route.params.id]) {
+    if (!this.$store.state.setup.endpoints[this.$route.params.id]) {
       console.log('Creating the actual endpoint.', this.$route.params.id)
-      window.model.server.setup.endpoints[this.$route.params.id] = {
+      this.$store.state.setup.endpoints[this.$route.params.id] = {
         params: null
       }
-      this.$parent.setupChanged()
     }
   }
 }
