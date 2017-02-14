@@ -23,7 +23,7 @@ export default new Vuex.Store({
   },
   actions: {
     // AJAX request, don't use directly, use the wrappers below
-    request (context, opts) {
+    request ({ commit }, opts) {
       var config = {}
 
       if (!opts.args) {
@@ -33,52 +33,48 @@ export default new Vuex.Store({
       console.log(opts.method.toUpperCase(), opts.path, 'Params:', opts.args)
 
       if (opts.loading !== false) {
-        context.commit('toggleLoading', true)
+        commit('toggleLoading', true)
       }
 
-      var p = window.axios[opts.method](opts.path, opts.args, config)
+      return window.axios[opts.method](opts.path, opts.args, config)
+        .then((response) => {
+          console.log('HTTP OK:', response)
 
-      p.then((response) => {
-        console.log('HTTP OK:', response)
+          if (opts.loading !== false) {
+            commit('toggleLoading', false)
+          }
+        })
+        .catch((error) => {
+          console.warn('HTTP ERR:', error)
 
-        if (opts.loading !== false) {
-          context.commit('toggleLoading', false)
-        }
-      })
-
-      p.catch((error) => {
-        console.warn('HTTP ERR:', error)
-
-        if (opts.loading !== false) {
-          context.commit('toggleLoading', false)
-        }
-      })
-
-      return p
+          if (opts.loading !== false) {
+            commit('toggleLoading', false)
+          }
+        })
     },
 
-    // AJAX GET
-    get (context, opts) { // path, loading, args
+    // GET
+    get ({ dispatch }, opts) {
       opts.method = 'get'
-      return context.dispatch('request', opts)
+      return dispatch('request', opts)
     },
 
-    // AJAX POST
-    post (context, opts) { // path, loading, args
+    // POST
+    post ({ dispatch }, opts) {
       opts.method = 'post'
-      return context.dispatch('request', opts)
+      return dispatch('request', opts)
     },
 
-    // AJAX PUT
-    put (context, opts) { // path, loading, args
+    // PUT
+    put ({ dispatch }, opts) {
       opts.method = 'put'
-      return context.dispatch('request', opts)
+      return dispatch('request', opts)
     },
 
-    // AJAX DELETE
-    delete (context, opts) { // path, loading, args
+    // DELETE
+    delete ({ dispatch }, opts) {
       opts.method = 'delete'
-      return context.dispatch('request', opts)
+      return dispatch('request', opts)
     }
   }
 })
