@@ -21,16 +21,32 @@ export default new Vuex.Store({
       collections: {},
       endpoints: {}
     },
-    core: null
+    core: null,
+    showDocs: true
   },
-  // getters: {
-  // },
+  getters: {
+    setupIsDifferent (state) {
+      return state.setup !== state.originalSetup
+    }
+  },
   mutations: {
     toggleLoading (state, truth) {
       state.loading = truth
     },
+    'SHOW_DOCS' (state, payload) {
+      if (payload) {
+        state.showDocs = payload
+      } else {
+        state.showDocs = !state.showDocs
+      }
+      // store to local storage
+      localStorage.set('showDocs', state.showDocs)
+    },
     'SETUP': (state, payload) => {
       state.setup = payload
+    },
+    'ORIGINAL_SETUP': (state, payload) => {
+      state.originalSetup = payload
     },
     'CORE': (state, payload) => {
       state.core = payload
@@ -47,7 +63,6 @@ export default new Vuex.Store({
       }
       // set axios base URL
       axios.defaults.baseURL = state.apiUrl
-      console.log(axios.defaults.baseURL)
       // store to local storage
       localStorage.set('config', payload)
     }
@@ -61,8 +76,7 @@ export default new Vuex.Store({
         path: '/apiko/setup'
       }).then(res => {
         commit('SETUP', res.data)
-
-        state.originalSetup = JSON.parse(JSON.stringify(state.setup)) // a dirty hack to duplicate object
+        commit('ORIGINAL_SETUP', res.data)
 
         return dispatch('get', {
           path: '/apiko/core'

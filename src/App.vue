@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <Loading></Loading>
+    <loading></loading>
 
-    <div class="card text-muted" v-if="displayMenu">
+    <div class="card text-muted" v-if="showMenu">
       <div class="card-content" style="padding: 4px 10px 4px 10px;">
         <span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-bar-chart"></i></span> <span>318 requests past 30 days</span>
-        <span class="is-pulled-right"><span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-plug"></i></span> Connected to: <span>{{base}}</span></span>
+        <span class="is-pulled-right"><span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-plug"></i></span> Connected to: <span>{{ $store.state.apiUrl }}</span></span>
       </div>
     </div>
 
-    <nav class="nav has-shadow" v-if="displayMenu">
+    <nav class="nav has-shadow" v-if="showMenu">
       <router-link class="nav-item" to="/dashboard">
         <img src="./assets/inappicon52x25.svg" alt="Apiko">
       </router-link>
@@ -19,28 +19,28 @@
           <span class="icon">
             <i class="fa fa-database"></i>
           </span>
-          <span>Collections <span v-if="displayDocs">(DB Tables)</span></span>
+          <span>Collections <span v-if="showDocs">(DB Tables)</span></span>
         </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/endpoints">
           <span class="icon">
             <i class="fa fa-map-signs"></i>
           </span>
-          <span>Endpoints <span v-if="displayDocs">(URLs)</span></span>
+          <span>Endpoints <span v-if="showDocs">(URLs)</span></span>
         </router-link>
       </div>
 
-      <div v-if="setupsDifferent" class="nav-center">
+      <div v-if="setupIsDifferent" class="nav-center">
         <a @click="setupRestore()" class="nav-item button is-small" style="margin-right: 12px;">
           <span class="icon">
             <i class="fa fa-refresh"></i>
           </span>
-          <span v-if="displayDocs">RESTORE</span>
+          <span v-if="showDocs">RESTORE</span>
         </a>
         <a @click="setupSave()" class="nav-item button is-primary is-small">
           <span class="icon">
             <i class="fa fa-save"></i>
           </span>
-          <span v-if="displayDocs">SAVE</span>
+          <span v-if="showDocs">SAVE</span>
         </a>
       </div>
 
@@ -59,7 +59,7 @@
           <span class="icon">
             <i class="fa fa-file-text"></i>
           </span>
-          <span><span v-if="displayDocs">This API's</span> Reference</span>
+          <span><span v-if="showDocs">This API's</span> Reference</span>
         </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/documentation">
           <span class="icon">
@@ -67,9 +67,9 @@
           </span>
           <span>Apiko Docs</span>
         </router-link>
-        <a class="nav-item" @click="toggleDocs" title="Toggle In-place Documentation">
+        <a class="nav-item" @click="$store.commit('SHOW_DOCS')" title="Toggle In-place Documentation">
           <span class="icon">
-            <i v-if="displayDocs" class="fa fa-question-circle"></i>
+            <i v-if="showDocs" class="fa fa-question-circle"></i>
             <i v-else class="fa fa-question-circle-o"></i>
           </span>
         </a>
@@ -77,13 +77,13 @@
     </nav>
 
     <transition name="fade">
-      <router-view :docs="displayDocs" @setup-change="setupChanged()"></router-view>
+      <router-view :docs="showDocs" @setup-change="setupChanged()"></router-view>
     </transition>
   </div>
 </template>
 
 <script>
-import helpers from './helpers'
+import localStorage from 'store'
 import Loading from './components/Loading'
 
 export default {
@@ -92,65 +92,40 @@ export default {
   },
   data () {
     return {
-      menuActive: false,
-      displayDocs: true
+      menuActive: false
     }
   },
   computed: {
-    displayMenu () {
+    showMenu () {
       return this.$route.meta.menu
     },
-    base () {
-      return helpers.storedValue('base')
+    showDocs () {
+      // mapState is not working here ?!!
+      return this.$store.state.showDocs
     },
-    setupsDifferent () {
-      if (JSON.stringify(this.$store.state.setup) !== JSON.stringify(this.$store.state.originalSetup)) {
-        return true
-      }
-
-      return false
+    setupIsDifferent () {
+      // mapGetters is not working here ?!!
+      return this.$store.getters.setupIsDifferent
     }
   },
   methods: {
     toggleMenu () {
-      return !this.menuActive
-    },
-    toggleDocs () {
-      this.displayDocs = !this.displayDocs
-
-      if (this.displayDocs) {
-        window.localStorage.removeItem('hide-docs')
-      } else {
-        window.localStorage.setItem('hide-docs', 'true')
-      }
+      this.menuActive = !this.menuActive
     },
     setupSave () {
-      console.log('Saving the setup...')
-
-      var params = {
-        setup: this.$store.state.setup
-      }
-
-      if (helpers.storedValue('secret', false)) {
-        params.secret = helpers.storedValue('secret')
-      }
-
-      this.$store.dispatch('put', {
-        path: '/apiko/setup',
-        args: params
-      })
+      // TODO : prepare the action in the store
+      this.$store.dispatch('setupSave')
     },
     setupRestore () {
-      console.log('Restoring the setup...')
-
-      if (helpers.different()) {
-        this.$store.state.setup = JSON.parse(JSON.stringify(this.$store.state.originalSetup)) // a dirty hack to duplicate object
-      }
+      // TODO : prepare the mutation in the store
+      this.$store.commit('SETUP_RESTORE')
     }
   },
   mounted () {
-    if (helpers.storedValue('hide-docs', false)) {
-      this.displayDocs = false
+    // show docs ?
+    const showDocs = localStorage.get('showDocs')
+    if (showDocs) {
+      this.$store.commit('SHOW_DOCS', showDocs)
     }
   }
 }
