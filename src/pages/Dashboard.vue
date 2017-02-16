@@ -3,7 +3,7 @@
     <div class="content">
       <h1 style="text-align: center;">Welcome to Apiko!</h1>
     </div>
-    <div v-if="docs" class="card">
+    <div v-if="showDocs" class="card">
       <div class="card-content">
         <div class="content">
           <div class="columns is-mobile">
@@ -59,8 +59,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
-  props: ['docs']
+  computed: {
+    ...mapState(['showDocs'])
+  }
 }
 </script>
 

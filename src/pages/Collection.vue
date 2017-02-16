@@ -11,18 +11,18 @@
                   <span class="icon is-small">
                     <i class="fa fa-align-left"></i>
                   </span>
-                  <span>PROPERTIES <span v-if="docs">(STRUCTURE)</span></span>
+                  <span>PROPERTIES <span v-if="showDocs">(STRUCTURE)</span></span>
                 </router-link>
                 <router-link class="button" active-class=" is-primary" :to="dataLink">
                   <span class="icon is-small">
                     <i class="fa fa-database"></i>
                   </span>
-                  <span>CONTENT <span v-if="docs">(DATA)</span></span>
+                  <span>CONTENT <span v-if="showDocs">(DATA)</span></span>
                 </router-link>
               </p>
               <h1>{{this.$route.params.id}}</h1>
-              <p v-if="this.$route.params.id === 'users' && docs">The user collection is required for user authentication and authorization. It can't be removed.</p>
-              <p v-if="docs">Imagine properties are columens in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
+              <p v-if="this.$route.params.id === 'users' && showDocs">The user collection is required for user authentication and authorization. It can't be removed.</p>
+              <p v-if="showDocs">Imagine properties are columens in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
               <table class="table is-striped">
                 <thead>
                   <tr><th>Name</th><th>Database Type</th><th></th></tr>
@@ -41,7 +41,7 @@
                 </tbody>
               </table>
               <h5>Add / Change Property</h5>
-              <p v-if="docs">Input an existing property name to change it or a new property name to add a new property to this collection.</p>
+              <p v-if="showDocs">Input an existing property name to change it or a new property name to add a new property to this collection.</p>
               <form ref="editForm" @submit.prevent="edit">
                 <div class="control is-grouped">
                   <p class="control is-expanded">
@@ -64,7 +64,7 @@
                   <input v-model="editPropertyComment" class="input" type="text" placeholder="Optional comment">
                 </p>
               </form>
-              <div v-if="docs" style="margin-top: 20px;">
+              <div v-if="showDocs" style="margin-top: 20px;">
                 <h4>Examples</h4>
                 <p>Not sure about types? Here are some examples:</p>
                 <ul>
@@ -87,9 +87,10 @@
 
 <script>
 import CollectionsList from '../components/CollectionsList'
+import { mapState } from 'vuex'
 
 export default {
-  props: ['docs'],
+  props: ['showDocs'],
   components: {
     CollectionsList
   },
@@ -121,9 +122,6 @@ export default {
     }
   },
   computed: {
-    setupsDifferent () {
-      return !this.$parent.setupsDifferent()
-    },
     typeDescription () {
       var desc = ''
 
@@ -165,7 +163,8 @@ export default {
     },
     propertiesLink () {
       return '/collections/' + this.$route.params.id
-    }
+    },
+    ...mapState(['showDocs'])
   },
   methods: {
     edit () {

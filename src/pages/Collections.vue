@@ -7,14 +7,14 @@
           <div class="card-content">
             <div class="content">
               <h1>Collections</h1>
-              <p v-if="docs">Collections are storages for data and work as a starting point for generating URL endpoints. Each collection is simply a database table. Select a collection from list on the left or create a new one.</p>
+              <p v-if="showDocs">Collections are storages for data and work as a starting point for generating URL endpoints. Each collection is simply a database table. Select a collection from list on the left or create a new one.</p>
               <h3>Create a Collection</h3>
               <p class="control has-addons">
                 <input v-model="edit" class="input" size="36" type="text" placeholder="Lowercase collection name, e.g.: 'posts'">
                 <router-link class="button is-primary" :to="editUrl"><span class="icon"><i class="fa fa-plus-circle"></i></span><span>ADD</span></router-link>
               </p>
-              <div v-if="docs">
-                <h3>Colletions and Endpoints</h3>
+              <div v-if="showDocs">
+                <h3>Collections and Endpoints</h3>
                 <p>Several URL endpoints are automatically generated for each collection you create. Imagine a database table like this one:</p>
                 <table class="table is-striped is-bordered">
                   <thead>
@@ -45,9 +45,9 @@
 
 <script>
 import CollectionsList from '../components/CollectionsList'
+import { mapState } from 'vuex'
 
 export default {
-  props: ['docs'],
   components: {
     CollectionsList
   },
@@ -59,7 +59,8 @@ export default {
   computed: {
     editUrl () {
       return '/collections/' + this.edit
-    }
+    },
+    ...mapState(['showDocs'])
   }
 }
 </script>

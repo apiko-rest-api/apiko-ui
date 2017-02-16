@@ -11,17 +11,17 @@
                   <span class="icon is-small">
                     <i class="fa fa-align-left"></i>
                   </span>
-                  <span>PROPERTIES <span v-if="docs">(STRUCTURE)</span></span>
+                  <span>PROPERTIES <span v-if="showDocs">(STRUCTURE)</span></span>
                 </router-link>
                 <router-link class="button" active-class=" is-primary" :to="dataLink">
                   <span class="icon is-small">
                     <i class="fa fa-database"></i>
                   </span>
-                  <span>CONTENT <span v-if="docs">(DATA)</span></span>
+                  <span>CONTENT <span v-if="showDocs">(DATA)</span></span>
                 </router-link>
               </p>
               <h1>{{this.$route.params.id}}</h1>
-              <p v-if="docs">Here's the actual data of this collection.</p>
+              <p v-if="showDocs">Here's the actual data of this collection.</p>
               <p>Haven't had time to implement this yet, hold on please (or use phpMyAdmin or someting to manage your data for now).</p>
             </div>
           </div>
@@ -33,9 +33,9 @@
 
 <script>
 import CollectionsList from '../components/CollectionsList'
+import { mapState } from 'vuex'
 
 export default {
-  props: ['docs'],
   components: {
     CollectionsList
   },
@@ -45,7 +45,8 @@ export default {
     },
     propertiesLink () {
       return '/collections/' + this.$route.params.id
-    }
+    },
+    ...mapState(['showDocs'])
   }
 }
 </script>

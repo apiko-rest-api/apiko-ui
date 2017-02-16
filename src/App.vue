@@ -77,7 +77,7 @@
     </nav>
 
     <transition name="fade">
-      <router-view :docs="showDocs" @setup-change="setupChanged()"></router-view>
+      <router-view @setup-change="setupChanged()"></router-view>
     </transition>
   </div>
 </template>
@@ -85,6 +85,7 @@
 <script>
 import localStorage from 'store'
 import Loading from './components/Loading'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -99,14 +100,8 @@ export default {
     showMenu () {
       return this.$route.meta.menu
     },
-    showDocs () {
-      // mapState is not working here ?!!
-      return this.$store.state.showDocs
-    },
-    setupIsDifferent () {
-      // mapGetters is not working here ?!!
-      return this.$store.getters.setupIsDifferent
-    }
+    ...mapGetters(['setupIsDifferent']),
+    ...mapState(['showDocs'])
   },
   methods: {
     toggleMenu () {

@@ -7,8 +7,8 @@
           <div class="card-content">
             <div class="content">
               <h1>Endpoints</h1>
-              <p v-if="docs">Endpoints are simply URLs which can be used to retrieve or change data stored on the server. Each endpoint consists of URL parameters and a handler (function) that receives these parameters validated (according to each endpoint's validation setup) and responds to the client. The quickest way to get the hang of endpoints is to:</p>
-              <ol v-if="docs">
+              <p v-if="showDocs">Endpoints are simply URLs which can be used to retrieve or change data stored on the server. Each endpoint consists of URL parameters and a handler (function) that receives these parameters validated (according to each endpoint's validation setup) and responds to the client. The quickest way to get the hang of endpoints is to:</p>
+              <ol v-if="showDocs">
                 <li>Create an endpoint using the form below. E.g. <code>GET /posts</code></li>
                 <li>Setup some parameters and their validation.</li>
                 <li>SAVE the setup and head to the /main.js file of this server for straight examples of coding handlers.</li>
@@ -45,8 +45,8 @@
                 <input v-model="editPath" class="input" size="36" type="text" placeholder="E.g.: /example or /example/action">
                 <router-link class="button is-primary" :to="editUrl"><span class="icon"><i class="fa fa-plus-circle"></i></span><span>ADD</span></router-link>
               </p>
-              <h4 v-if="docs">ID Parameters</h4>
-              <p v-if="docs">Endpoint address may contain ID parameters in the format of <code>:name</code>, for example <code>/posts/:post/comments/:comment</code> will match a request such as <code>/posts/about-us/comment/46</code>. The parameters are named accordingly and can be accessed with <code>request.params</code> inside an endpoint handler function, e.g. <code>request.params.comment // == 46</code>.</p>
+              <h4 v-if="showDocs">ID Parameters</h4>
+              <p v-if="showDocs">Endpoint address may contain ID parameters in the format of <code>:name</code>, for example <code>/posts/:post/comments/:comment</code> will match a request such as <code>/posts/about-us/comment/46</code>. The parameters are named accordingly and can be accessed with <code>request.params</code> inside an endpoint handler function, e.g. <code>request.params.comment // == 46</code>.</p>
             </div>
           </div>
         </div>
@@ -57,9 +57,9 @@
 
 <script>
 import EndpointsList from '../components/EndpointsList'
+import { mapState } from 'vuex'
 
 export default {
-  props: ['docs'],
   components: {
     EndpointsList
   },
@@ -72,7 +72,8 @@ export default {
   computed: {
     editUrl () {
       return '/endpoints/' + encodeURIComponent(this.editMethod + ' ' + this.editPath)
-    }
+    },
+    ...mapState(['showDocs'])
   }
 }
 </script>

@@ -11,20 +11,20 @@
                   <span class="icon is-small">
                     <i class="fa fa-align-left"></i>
                   </span>
-                  <span><span v-if="docs">URL PARAMETERS</span><span v-else>PARAMS</span></span>
+                  <span><span v-if="showDocs">URL PARAMETERS</span><span v-else>PARAMS</span></span>
                 </router-link>
                 <router-link class="button" active-class=" is-primary" :to="referenceLink">
                   <span class="icon is-small">
                     <i class="fa fa-pencil-square-o"></i>
                   </span>
-                  <span><span v-if="docs">USAGE</span> REFERENCE</span>
+                  <span><span v-if="showDocs">USAGE</span> REFERENCE</span>
                 </router-link>
               </p>
               <h1>{{this.$route.params.id}}</h1>
               <div v-if="isParamsLink">
-                <p v-if="coreEndpoint && docs">Core endpoint, can't be removed. You can only alter the parameters.</p>
+                <p v-if="coreEndpoint && showDocs">Core endpoint, can't be removed. You can only alter the parameters.</p>
                 <h2>Access</h2>
-                <p v-if="docs">Usage of each custom endpoint can be restricted by login or specific roles. Click the <strong>URESTRICTED</strong> button to require login and then type-in a comma-separated list of roles. A user must have <strong>one of</strong> these roles included in their <strong>role</strong> property (column) in order to be able to access this endpoint.</p>
+                <p v-if="showDocs">Usage of each custom endpoint can be restricted by login or specific roles. Click the <strong>URESTRICTED</strong> button to require login and then type-in a comma-separated list of roles. A user must have <strong>one of</strong> these roles included in their <strong>role</strong> property (column) in order to be able to access this endpoint.</p>
                 <div class="control is-grouped">
                   <p class="control has-addons is-expanded">
                     <a v-if="roles && login" @click="toggle('login')" class="button is-primary">RESTRICTED FOR</a>
@@ -33,9 +33,9 @@
                     <input v-model="roles" class="input is-expanded" type="text" :disabled="rolesDisabled" placeholder="Comma-separated list of roles, e.g.: 'moderator,admin'">
                   </p>
                 </div>
-                <h5 v-if="docs">Example</h5>
-                <p v-if="docs">Imagine the following data in the users collection</p>
-                <table v-if="docs" class="table is-striped">
+                <h5 v-if="showDocs">Example</h5>
+                <p v-if="showDocs">Imagine the following data in the users collection</p>
+                <table v-if="showDocs" class="table is-striped">
                   <thead>
                     <tr><th>id</th><th>...</th><th>roles</th></tr>
                   </thead>
@@ -46,9 +46,9 @@
                     <tr><td><code>4</code></td><td>...</td><td><span class="text-muted">(empty)</span></td></tr>
                   </tbody>
                 </table>
-                <p v-if="docs">If you would restrict this endpoint by <code>admin,moderator</code>, only users <strong>1 and 3</strong> could use this endpoint, others would get the <em>403: Forbidden</em> HTTP error.</p>
-                <h5 v-if="docs">Catpcha</h5>
-                <p v-if="docs">Endpoints can also be protected by a captcha by switching the <strong>NO CAPTCHA</strong> button. In case of captcha protection, answer to the catpcha image must be supplied in the captcha parameter with each call to this endpoint. A captcha image can be retrieved before calling this endpoint from <code>GET /captcha</code>.</p>
+                <p v-if="showDocs">If you would restrict this endpoint by <code>admin,moderator</code>, only users <strong>1 and 3</strong> could use this endpoint, others would get the <em>403: Forbidden</em> HTTP error.</p>
+                <h5 v-if="showDocs">Catpcha</h5>
+                <p v-if="showDocs">Endpoints can also be protected by a captcha by switching the <strong>NO CAPTCHA</strong> button. In case of captcha protection, answer to the catpcha image must be supplied in the captcha parameter with each call to this endpoint. A captcha image can be retrieved before calling this endpoint from <code>GET /captcha</code>.</p>
                 <h2>Parameters</h2>
                 <table class="table is-striped" v-if="core || custom">
                   <thead>
@@ -69,7 +69,7 @@
                 </table>
                 <p v-else>There are no parameters defined for this endpoint.</p>
                 <h4>Add<span v-if="core || custom"> / Change</span> a Parameter</h4>
-                <p v-if="docs">Input an existing parameter name to change it or a new paramter name to add a new parameter to this endpoint.</p>
+                <p v-if="showDocs">Input an existing parameter name to change it or a new paramter name to add a new parameter to this endpoint.</p>
                 <form ref="editForm" @submit.prevent="edit">
                   <div class="control is-grouped">
                     <p class="control is-expanded">
@@ -98,7 +98,7 @@
                   </div>
                   <p><small v-if="currentRegexDesc">{{currentRegexDesc}}</small></p>
                 </form>
-                <div v-if="docs" style="margin-top: 20px;">
+                <div v-if="showDocs" style="margin-top: 20px;">
                   <h4>Defined vs Undefined</h4>
                   <p>You can either define an endpoint here in the UI or define it in the code. Either way, you will have to create a coded handler function. The difference is in the parameters validation and documenting.</p>
                   <p>If you want to use the API Reference feature of Apiko, which automates the API documentation where possible, the endpoint has to be defined over this UI.</p>
@@ -146,7 +146,7 @@ Apiko.on('GET /collection/action', (request, store) => {
                 </div>
                 <div v-if="!coreEndpoint">
                   <h2>Removal</h2>
-                  <p v-if="docs">Don't forget to <strong>SAVE</strong> to put the endpoint's removal in effect.</p>
+                  <p v-if="showDocs">Don't forget to <strong>SAVE</strong> to put the endpoint's removal in effect.</p>
                   <button @click="remove()" class="button is-danger is-outlined"><span class="icon"><i class="fa fa-times"></i></span><span>REMOVE ENDPOINT</span></button>
                 </div>
               </div>
@@ -164,9 +164,9 @@ Apiko.on('GET /collection/action', (request, store) => {
 <script>
 import EndpointsList from '../components/EndpointsList'
 import EndpointReference from '../components/EndpointReference'
+import { mapState } from 'vuex'
 
 export default {
-  props: ['docs'],
   components: {
     EndpointsList,
     EndpointReference
@@ -240,7 +240,8 @@ export default {
         return false
       }
       return true
-    }
+    },
+    ...mapState(['showDocs'])
   },
   methods: {
     applyPreset (event) {
