@@ -83,6 +83,7 @@
 </template>
 
 <script>
+import helpers from './helpers'
 import Loading from './components/Loading'
 
 export default {
@@ -100,7 +101,7 @@ export default {
       return this.$route.meta.menu
     },
     base () {
-      return window.helpers.storedValue('base')
+      return helpers.storedValue('base')
     },
     setupsDifferent () {
       if (JSON.stringify(this.$store.state.setup) !== JSON.stringify(this.$store.state.originalSetup)) {
@@ -130,8 +131,8 @@ export default {
         setup: this.$store.state.setup
       }
 
-      if (window.helpers.storedValue('secret', false)) {
-        params.secret = window.helpers.storedValue('secret')
+      if (helpers.storedValue('secret', false)) {
+        params.secret = helpers.storedValue('secret')
       }
 
       this.$store.dispatch('put', {
@@ -142,13 +143,13 @@ export default {
     setupRestore () {
       console.log('Restoring the setup...')
 
-      if (window.helpers.different()) {
+      if (helpers.different()) {
         this.$store.state.setup = JSON.parse(JSON.stringify(this.$store.state.originalSetup)) // a dirty hack to duplicate object
       }
     }
   },
   mounted () {
-    if (window.helpers.storedValue('hide-docs', false)) {
+    if (helpers.storedValue('hide-docs', false)) {
       this.displayDocs = false
     }
   }
@@ -156,7 +157,7 @@ export default {
 </script>
 
 <style>
-html, 
+html,
 body {
   display: block;
   min-height: 100vh;
@@ -224,4 +225,3 @@ nav a span:last-child {
   }
 }
 </style>
-

@@ -1,3 +1,5 @@
+import store from './store'
+
 module.exports = {
   storedValue (name, altValue) {
     var value = window.localStorage.getItem(name)
@@ -9,17 +11,9 @@ module.exports = {
     return value
   },
 
-  verified () {
-    if (window.store.state.setup) {
-      return true
-    }
-
-    return false
-  },
-
   different () {
     if (this.server !== undefined) {
-      if (JSON.stringify(window.store.state.setup) !== JSON.stringify(window.store.state.originalSetup)) {
+      if (JSON.stringify(store.state.setup) !== JSON.stringify(store.state.originalSetup)) {
         return true
       }
     }
