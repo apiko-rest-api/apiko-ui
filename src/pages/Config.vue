@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import localStorage from 'store'
+
 export default {
   data () {
     return {
@@ -47,6 +49,18 @@ export default {
       prefix: '',
       secret: ''
     }
+  },
+  created () {
+    // fetch config from local storage
+    const originalConfig = localStorage.get('config')
+    if (originalConfig) {
+      this.$store.commit('CONFIG', originalConfig)
+    }
+    // try to connect to API, redirect if success
+    this.$store.dispatch('connect').then(() => {
+      const redirectPath = this.$route.query.redirect || '/'
+      this.$router.push(redirectPath)
+    })
   },
   computed: {
     buttonClasses () {

@@ -1,28 +1,38 @@
 <template>
   <div class="page padded">
     <div class="columns is-mobile">
-      <div class="column is-one-quarter"><CollectionsList ref="list"></CollectionsList></div>
+      <div class="column is-one-quarter">
+        <CollectionsList ref="list"></CollectionsList>
+      </div>
       <div class="column">
         <div class="card">
           <div class="card-content">
             <div class="content">
+
               <p class="control has-addons is-pulled-right">
+
                 <router-link class="button" active-class=" is-primary" :to="propertiesLink" exact>
                   <span class="icon is-small">
                     <i class="fa fa-align-left"></i>
                   </span>
                   <span>PROPERTIES <span v-if="showDocs">(STRUCTURE)</span></span>
                 </router-link>
+
                 <router-link class="button" active-class=" is-primary" :to="dataLink">
                   <span class="icon is-small">
                     <i class="fa fa-database"></i>
                   </span>
                   <span>CONTENT <span v-if="showDocs">(DATA)</span></span>
                 </router-link>
+
               </p>
+
               <h1>{{this.$route.params.id}}</h1>
+
               <p v-if="this.$route.params.id === 'users' && showDocs">The user collection is required for user authentication and authorization. It can't be removed.</p>
+
               <p v-if="showDocs">Imagine properties are columens in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
+
               <table class="table is-striped">
                 <thead>
                   <tr><th>Name</th><th>Database Type</th><th></th></tr>
@@ -40,8 +50,11 @@
                   </tr>
                 </tbody>
               </table>
+
               <h5>Add / Change Property</h5>
+
               <p v-if="showDocs">Input an existing property name to change it or a new property name to add a new property to this collection.</p>
+
               <form ref="editForm" @submit.prevent="edit">
                 <div class="control is-grouped">
                   <p class="control is-expanded">
@@ -64,6 +77,7 @@
                   <input v-model="editPropertyComment" class="input" type="text" placeholder="Optional comment">
                 </p>
               </form>
+
               <div v-if="showDocs" style="margin-top: 20px;">
                 <h4>Examples</h4>
                 <p>Not sure about types? Here are some examples:</p>
@@ -77,6 +91,7 @@
                   <li>Money - DECIMAL (19,4)</li>
                 </ul>
               </div>
+
             </div>
           </div>
         </div>
@@ -116,30 +131,58 @@ export default {
       editPropertyName: '',
       editPropertyType: 'INTEGER',
       editPropertyTypeLength: '',
-      editPropertyComment: '',
-
-      custom: this.$store.state.setup.collections[this.$route.params.id].params
+      editPropertyComment: ''
     }
   },
   computed: {
+    custom () {
+      return this.$store.state.setup.collections[this.$route.params.id].params
+    },
     typeDescription () {
       var desc = ''
-
       switch (this.editPropertyType) {
-        case 'INTEGER': desc = 'Integer number, length ' + this.availableTypes.INTEGER + ' or empty for default.'; break
-        case 'STRING': desc = 'A variable length string (VARCHAR), length ' + this.availableTypes.STRING + ' or empty for default (255).'; break
-        case 'CHAR': desc = 'A fixed length string, length ' + this.availableTypes.CHAR + ' or empty for default (255).'; break
-        case 'TEXT': desc = 'Longer string (e.g. for articles), length \'' + this.availableTypes.TEXT.split(',').join('\', \'') + '\' or empty for default.'; break
-        case 'BIGINT': desc = 'An attribute defined as BIGINT will be treated like a string in order to prevent precision loss. Leave the length empty.'; break
-        case 'FLOAT': desc = 'Floating point number (4-byte precision), comma-separated lengths, e.g.: 5,2'; break
-        case 'DOUBLE': desc = 'Floating point number (8-byte precision), comma-separated lengths, e.g.: 5,2'; break
-        case 'DECIMAL': desc = 'Decimal number, comma-separated lengths, e.g.: 5,2'; break
-        case 'BOOLEAN': desc = 'A Boolean or TINYINT, depending on database. Leave length empty.'; break
-        case 'TIME': desc = 'A TIME column. Leave length empty.'; break
-        case 'DATE': desc = 'A DATETIME column. Leave length empty.'; break
-        case 'DATEONLY': desc = 'A date only column. Leave length empty.'; break
-        case 'BLOB': desc = 'Binary storage (e.g. for files), length \'' + this.availableTypes.BLOB.split(',').join('\', \'') + '\' or empty for default.'; break
-        case 'ENUM': desc = 'Enumeration, comma-separated allowed values, e.g.: Tokyo,Bogota,Prague'; break
+        case 'INTEGER':
+          desc = 'Integer number, length ' + this.availableTypes.INTEGER + ' or empty for default.'
+          break
+        case 'STRING':
+          desc = 'A variable length string (VARCHAR), length ' + this.availableTypes.STRING + ' or empty for default (255).'
+          break
+        case 'CHAR':
+          desc = 'A fixed length string, length ' + this.availableTypes.CHAR + ' or empty for default (255).'
+          break
+        case 'TEXT':
+          desc = 'Longer string (e.g. for articles), length \'' + this.availableTypes.TEXT.split(',').join('\', \'') + '\' or empty for default.'
+          break
+        case 'BIGINT':
+          desc = 'An attribute defined as BIGINT will be treated like a string in order to prevent precision loss. Leave the length empty.'
+          break
+        case 'FLOAT':
+          desc = 'Floating point number (4-byte precision), comma-separated lengths, e.g.: 5,2'
+          break
+        case 'DOUBLE':
+          desc = 'Floating point number (8-byte precision), comma-separated lengths, e.g.: 5,2'
+          break
+        case 'DECIMAL':
+          desc = 'Decimal number, comma-separated lengths, e.g.: 5,2'
+          break
+        case 'BOOLEAN':
+          desc = 'A Boolean or TINYINT, depending on database. Leave length empty.'
+          break
+        case 'TIME':
+          desc = 'A TIME column. Leave length empty.'
+          break
+        case 'DATE':
+          desc = 'A DATETIME column. Leave length empty.'
+          break
+        case 'DATEONLY':
+          desc = 'A date only column. Leave length empty.'
+          break
+        case 'BLOB':
+          desc = 'Binary storage (e.g. for files), length \'' + this.availableTypes.BLOB.split(',').join('\', \'') + '\' or empty for default.'
+          break
+        case 'ENUM':
+          desc = 'Enumeration, comma-separated allowed values, e.g.: Tokyo,Bogota,Prague'
+          break
       }
 
       return desc
@@ -199,9 +242,7 @@ export default {
     }
   },
   created () {
-    this.$store.state.setup.collections[this.$route.params.id] = this.$store.state.setup.collections[this.$route.params.id] || {}
-
-    this.custom = this.$store.state.setup.collections[this.$route.params.id]
+    // this.$store.state.setup.collections[this.$route.params.id] = this.$store.state.setup.collections[this.$route.params.id] || {}
   }
 }
 </script>
