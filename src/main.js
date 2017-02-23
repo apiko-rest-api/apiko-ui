@@ -1,4 +1,3 @@
-import localStorage from 'store'
 import Vue from 'vue'
 
 // internal libraries
@@ -15,16 +14,12 @@ new Vue({
   el: '#app',
   render: h => h(App),
   created () {
-    // fetch config from local storage
-    const originalConfig = localStorage.get('config')
-    if (originalConfig) {
-      this.$store.commit('CONFIG', originalConfig)
-    }
-    // connect to API, or redirect to config page
-    this.$store.dispatch('connect').then(() => {
-      this.$router.push('/')
-    }).catch(() => {
-      this.$router.push('/config')
+    // go straight to the config page on app startup
+    this.$router.push({
+      path: '/config',
+      query: {
+        redirect: this.$route.path
+      }
     })
   }
 })
