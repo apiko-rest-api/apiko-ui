@@ -25,10 +25,6 @@
       </p>
     </form>
 
-    <pre>type => {{type}}</pre>
-    <pre>length => {{length}}</pre>
-    <pre>comment => {{comment}}</pre>
-
     <div v-if="showDocs" style="margin-top: 20px;">
       <h4>Examples</h4>
       <p>Not sure about types? Here are some examples:</p>
