@@ -23,7 +23,6 @@ import EndpointsList from '../components/EndpointsList'
 import EndpointReference from '../components/EndpointReference'
 
 export default {
-  props: ['linktodata'],
   data () {
     return {
       endpoints: window.model.server.setup.endpoints

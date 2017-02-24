@@ -1,18 +1,29 @@
 <template>
   <div class="page padded">
     <div class="columns is-mobile">
-      <div class="column is-one-quarter"><CollectionsList></CollectionsList></div>
+      <div class="column is-one-quarter">
+        <CollectionsList></CollectionsList>
+      </div>
       <div class="column">
         <div class="card">
           <div class="card-content">
             <div class="content">
+
               <h1>Collections</h1>
+
               <p v-if="showDocs">Collections are storages for data and work as a starting point for generating URL endpoints. Each collection is simply a database table. Select a collection from list on the left or create a new one.</p>
+
               <h3>Create a Collection</h3>
-              <p class="control has-addons">
-                <input v-model="edit" class="input" size="36" type="text" placeholder="Lowercase collection name, e.g.: 'posts'">
-                <router-link class="button is-primary" :to="editUrl"><span class="icon"><i class="fa fa-plus-circle"></i></span><span>ADD</span></router-link>
-              </p>
+              <form @submit.prevent="createCollection" style="margin-bottom: 20px">
+                <p class="control has-addons">
+                  <input v-model="newCollectionName" class="input" size="36" type="text" placeholder="Lowercase collection name, e.g.: 'posts'">
+                  <button type="submit" class="button is-primary">
+                    <span class="icon"><i class="fa fa-plus-circle"></i></span>
+                    <span>ADD</span>
+                  </button>
+                </p>
+              </form>
+
               <div v-if="showDocs">
                 <h3>Collections and Endpoints</h3>
                 <p>Several URL endpoints are automatically generated for each collection you create. Imagine a database table like this one:</p>
@@ -35,6 +46,7 @@
                 <h3>Validation</h3>
                 <p>All values received in this API are validated while getting through the endpoints. There is no need to worry about validation here in collections. The types that you set to each property here are purely database descriptors. When you create endpoints, you set validation rules for each parameter received.</p>
               </div>
+
             </div>
           </div>
         </div>
@@ -53,13 +65,15 @@ export default {
   },
   data () {
     return {
-      edit: ''
+      newCollectionName: ''
+    }
+  },
+  methods: {
+    createCollection () {
+      this.$router.push('/collections/' + this.newCollectionName)
     }
   },
   computed: {
-    editUrl () {
-      return '/collections/' + this.edit
-    },
     ...mapState(['showDocs'])
   }
 }

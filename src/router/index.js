@@ -44,6 +44,7 @@ export default new VueRouter({
       }
     },
     {
+      name: 'collection',
       path: '/collections/:id',
       component: Collection,
       meta: {
@@ -51,6 +52,7 @@ export default new VueRouter({
       }
     },
     {
+      name: 'collection-data',
       path: '/collections/:id/data',
       component: CollectionData,
       meta: {

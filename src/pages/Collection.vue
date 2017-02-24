@@ -11,14 +11,14 @@
 
               <p class="control has-addons is-pulled-right">
 
-                <router-link class="button" active-class=" is-primary" :to="propertiesLink" exact>
+                <router-link class="button" active-class=" is-primary" :to="{name: 'collection', params: {id: name}}" exact>
                   <span class="icon is-small">
                     <i class="fa fa-align-left"></i>
                   </span>
                   <span>PROPERTIES <span v-if="showDocs">(STRUCTURE)</span></span>
                 </router-link>
 
-                <router-link class="button" active-class=" is-primary" :to="dataLink">
+                <router-link class="button" active-class=" is-primary" :to="{name: 'collection-data', params: {id: name}}">
                   <span class="icon is-small">
                     <i class="fa fa-database"></i>
                   </span>
@@ -27,26 +27,26 @@
 
               </p>
 
-              <h1>{{this.$route.params.id}}</h1>
+              <h1>{{ this.name }}</h1>
 
-              <p v-if="this.$route.params.id === 'users' && showDocs">The user collection is required for user authentication and authorization. It can't be removed.</p>
+              <p v-if="this.name === 'users' && showDocs">The user collection is required for user authentication and authorization. It can't be removed.</p>
 
-              <p v-if="showDocs">Imagine properties are columens in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
+              <p v-if="showDocs">Imagine properties are columns in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
 
               <table class="table is-striped">
                 <thead>
                   <tr><th>Name</th><th>Database Type</th><th></th></tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(prop, name) in core">
+                  <tr v-for="(prop, name) in currentCollection.core">
                     <td><strong>{{name}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
                     <td>{{prop.type}}</td>
                     <td><span class="tag is-light">core</span></td>
                   </tr>
-                  <tr v-for="(prop, name) in custom">
+                  <tr v-for="(prop, name) in currentCollection.setup">
                     <td><strong>{{name}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
                     <td>{{prop.type}}</td>
-                    <td><button @click="remove(name)" class="button is-danger is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button></td>
+                    <td><button @click="removeProperty(name)" class="button is-danger is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button></td>
                   </tr>
                 </tbody>
               </table>
@@ -55,15 +55,15 @@
 
               <p v-if="showDocs">Input an existing property name to change it or a new property name to add a new property to this collection.</p>
 
-              <form ref="editForm" @submit.prevent="edit">
+              <form ref="editForm" @submit.prevent="updateProperty">
                 <div class="control is-grouped">
                   <p class="control is-expanded">
-                    <input v-model="editPropertyName" class="input" type="text" placeholder="Lowercase name, e.g.: 'author'">
+                    <input v-model="propertyName" class="input" type="text" placeholder="Lowercase name, e.g.: 'author'">
                   </p>
                   <p class="control has-addons">
                     <span class="select">
                       <select v-model="editPropertyType">
-                        <option v-for="(lengths, type) in availableTypes">{{type}}</option>
+                        <option v-for="(lengths, type) in availableTypes">{{ type }}</option>
                       </select>
                     </span>
                     <input v-model="editPropertyTypeLength" class="input" type="text" placeholder="Length">
@@ -72,7 +72,7 @@
                     <button type="submit" class="button is-primary"><span class="icon"><i class="fa fa-plus-circle"></i></span><span>ADD</span></button>
                   </p>
                 </div>
-                <p>&nbsp;<small v-if="typeDescription">{{typeDescription}}</small></p>
+                <p>&nbsp;<small v-if="typeDescription">{{ typeDescription }}</small></p>
                 <p class="control is-expanded">
                   <input v-model="editPropertyComment" class="input" type="text" placeholder="Optional comment">
                 </p>
@@ -102,10 +102,9 @@
 
 <script>
 import CollectionsList from '../components/CollectionsList'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['showDocs'],
   components: {
     CollectionsList
   },
@@ -128,15 +127,18 @@ export default {
         ENUM: ''
       },
 
-      editPropertyName: '',
+      propertyName: '',
       editPropertyType: 'INTEGER',
       editPropertyTypeLength: '',
       editPropertyComment: ''
     }
   },
   computed: {
-    custom () {
-      return this.$store.state.setup.collections[this.$route.params.id].params
+    name () {
+      return this.$route.params.id
+    },
+    currentCollection () {
+      return this.collection(this.name)
     },
     typeDescription () {
       var desc = ''
@@ -187,62 +189,31 @@ export default {
 
       return desc
     },
-    core () {
-      if (this.$store.state.core.collections[this.$route.params.id]) {
-        return this.$store.state.core.collections[this.$route.params.id]
-      }
-
-      return {
-        id: {
-          type: 'INTEGER'
-        },
-        owner: {
-          type: 'INTEGER'
-        }
-      }
-    },
-    dataLink () {
-      return '/collections/' + this.$route.params.id + '/data'
-    },
-    propertiesLink () {
-      return '/collections/' + this.$route.params.id
-    },
-    ...mapState(['showDocs'])
+    ...mapState(['showDocs']),
+    ...mapGetters(['collection'])
   },
   methods: {
-    edit () {
-      if (this.custom[this.editPropertyName]) {
-        console.log('Editing an existing property', this.editPropertyName)
-      } else {
-        console.log('Creating a new property', this.editPropertyName)
-      }
-
-      var prop = {
+    updateProperty () {
+      const prop = {
         type: (this.editPropertyType + (this.editPropertyTypeLength ? ' ' + this.editPropertyTypeLength : ''))
       }
-
       if (this.editPropertyComment) {
         prop.comment = this.editPropertyComment
       }
-
-      this.custom[this.editPropertyName] = prop
-      this.$refs.list.$forceUpdate()
+      this.$store.commit('UPDATE_PROPERTY', {
+        collection: this.name,
+        name: this.propertyName,
+        prop
+      })
       this.$forceUpdate()
-      this.$refs.editForm.reset()
-      this.$parent.setupsChanged()
     },
-    remove () {
-      if (this.custom[this.editPropertyName]) {
-        delete this.custom[this.editPropertyName]
-      }
-
-      this.$refs.list.$forceUpdate()
+    removeProperty (name) {
+      this.$store.commit('REMOVE_PROPERTY', {
+        collection: this.name,
+        name
+      })
       this.$forceUpdate()
-      this.$parent.setupsChanged()
     }
-  },
-  created () {
-    // this.$store.state.setup.collections[this.$route.params.id] = this.$store.state.setup.collections[this.$route.params.id] || {}
   }
 }
 </script>
