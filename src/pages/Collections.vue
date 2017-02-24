@@ -70,6 +70,7 @@ export default {
   },
   methods: {
     createCollection () {
+      this.$store.commit('CREATE_COLLECTION', this.newCollectionName)
       this.$router.push('/collections/' + this.newCollectionName)
     }
   },
@@ -78,6 +79,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

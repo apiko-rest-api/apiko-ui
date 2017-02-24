@@ -42,14 +42,7 @@ export default new Vuex.Store({
     // returns a collection's setup
     collection: state => name => {
       let collection = {
-        core: {
-          id: {
-            type: 'INTEGER'
-          },
-          owner: {
-            type: 'INTEGER'
-          }
-        },
+        core: {},
         setup: {}
       }
       if (typeof state.core.collections[name] !== 'undefined') {
@@ -59,6 +52,10 @@ export default new Vuex.Store({
         collection.setup = state.setup.collections[name]
       }
       return collection
+    },
+    // is collection part of core ?
+    isCoreCollection: state => name => {
+      return !!state.core.collections[name]
     }
   },
 
@@ -109,6 +106,15 @@ export default new Vuex.Store({
     // remove a property
     'REMOVE_PROPERTY' (state, payload) {
       delete state.setup.collections[payload.collection][payload.name]
+    },
+    // create a new collection
+    'CREATE_COLLECTION' (state, name) {
+      state.setup.collections[name] = {
+        id: {
+          type: 'INTEGER'
+        }
+      }
+      // TODO add a bunch of default endpoints
     }
   },
 

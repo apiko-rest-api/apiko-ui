@@ -38,12 +38,12 @@
                   <tr><th>Name</th><th>Database Type</th><th></th></tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(prop, name) in currentCollection.core">
+                  <tr v-for="(prop, name) in properties.core">
                     <td><strong>{{name}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
                     <td>{{prop.type}}</td>
                     <td><span class="tag is-light">core</span></td>
                   </tr>
-                  <tr v-for="(prop, name) in currentCollection.setup">
+                  <tr v-for="(prop, name) in properties.setup">
                     <td><strong>{{name}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
                     <td>{{prop.type}}</td>
                     <td><button @click="removeProperty(name)" class="button is-danger is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button></td>
@@ -127,6 +127,9 @@ export default {
         ENUM: ''
       },
 
+      name: '',
+      properties: {},
+
       propertyName: '',
       editPropertyType: 'INTEGER',
       editPropertyTypeLength: '',
@@ -134,12 +137,6 @@ export default {
     }
   },
   computed: {
-    name () {
-      return this.$route.params.id
-    },
-    currentCollection () {
-      return this.collection(this.name)
-    },
     typeDescription () {
       var desc = ''
       switch (this.editPropertyType) {
@@ -192,7 +189,22 @@ export default {
     ...mapState(['showDocs']),
     ...mapGetters(['collection'])
   },
+  created () {
+    this.getCollection(this.$route.params.id)
+  },
+  watch: {
+    '$route.params.id' (name) {
+      this.getCollection(name)
+    }
+  },
   methods: {
+    getCollection (name) {
+      this.name = name
+      this.properties = this.$store.getters.collection(name)
+      if (Object.keys(this.properties.core).length === 0 && Object.keys(this.properties.setup).length === 0) {
+        this.$router.push('/collections')
+      }
+    },
     updateProperty () {
       const prop = {
         type: (this.editPropertyType + (this.editPropertyTypeLength ? ' ' + this.editPropertyTypeLength : ''))
