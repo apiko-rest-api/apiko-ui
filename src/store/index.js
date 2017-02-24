@@ -53,6 +53,14 @@ export default new Vuex.Store({
       }
       return collection
     },
+    // returns a property's setup
+    property: (state, getters) => (collectionName, name) => {
+      const collection = getters.collection(collectionName)
+      if (!collection || !collection.setup || typeof collection.setup[name] === 'undefined') {
+        return null
+      }
+      return collection.setup[name]
+    },
     // is collection part of core ?
     isCoreCollection: state => name => {
       return !!state.core.collections[name]
@@ -100,6 +108,9 @@ export default new Vuex.Store({
     'UPDATE_PROPERTY' (state, payload) {
       if (typeof state.setup.collections[payload.collection] === 'undefined') {
         state.setup.collections[payload.collection] = {}
+      }
+      if (payload.originalName !== payload.name) {
+        delete state.setup.collections[payload.collection][payload.originalName]
       }
       state.setup.collections[payload.collection][payload.name] = payload.prop
     },
