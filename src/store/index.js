@@ -126,6 +126,13 @@ export default new Vuex.Store({
         }
       }
       // TODO add a bunch of default endpoints
+    },
+    // update an endpoint
+    'UPDATE_ENDPOINT' (state, payload) {
+      if (payload.originalPath !== payload.path) {
+        delete state.setup.endpoints[payload.originalPath]
+      }
+      state.setup.endpoints[payload.path] = payload.endpoint
     }
   },
 
