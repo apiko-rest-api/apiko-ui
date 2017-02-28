@@ -7,6 +7,10 @@ import router from './router'
 // components
 import App from './App'
 
+// docs
+import DocsBase from './components/docs/Base'
+Vue.component('doc', DocsBase)
+
 /* eslint-disable no-new */
 new Vue({
   router,

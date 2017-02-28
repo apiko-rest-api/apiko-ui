@@ -40,13 +40,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
   props: ['method', 'path'],
-  computed: {
-    ...mapState(['showDocs'])
-  },
   created () {
     this.getEndpointData()
   },

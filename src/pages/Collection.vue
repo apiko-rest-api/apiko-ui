@@ -13,16 +13,16 @@
 
                 <router-link class="button" active-class=" is-primary" :to="{name: 'collection', params: {id: name}}" exact>
                   <span class="icon is-small">
-                    <i class="fa fa-align-left"></i>
+                    <i class="fa fa-cog"></i>
                   </span>
-                  <span>PROPERTIES <span v-if="showDocs">(STRUCTURE)</span></span>
+                  <span>CONFIGURATION</span>
                 </router-link>
 
                 <router-link class="button" active-class=" is-primary" :to="{name: 'collection-data', params: {id: name}}">
                   <span class="icon is-small">
                     <i class="fa fa-database"></i>
                   </span>
-                  <span>CONTENT <span v-if="showDocs">(DATA)</span></span>
+                  <span>DATA</span>
                 </router-link>
 
               </p>
@@ -31,7 +31,7 @@
 
               <p v-if="this.name === 'users' && showDocs">The user collection is required for user authentication and authorization. It can't be removed.</p>
 
-              <p v-if="showDocs">Imagine properties are columns in a database table. Individual cells in the table will be then identified by their row ID and a property (column) name.</p>
+              <doc name="collection"></doc>
 
               <table class="table is-striped">
                 <thead>
@@ -75,7 +75,7 @@
 <script>
 import CollectionProperty from '../components/CollectionProperty'
 import CollectionsList from '../components/CollectionsList'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -91,7 +91,6 @@ export default {
     }
   },
   computed: {
-    ...mapState(['showDocs']),
     ...mapGetters(['collection'])
   },
   created () {

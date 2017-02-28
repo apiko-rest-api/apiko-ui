@@ -10,7 +10,7 @@
     </div>
 
     <nav class="nav has-shadow" v-if="showMenu">
-      <router-link class="nav-item" to="/dashboard">
+      <router-link class="nav-item" to="/">
         <img src="./assets/inappicon52x25.svg" alt="Apiko">
       </router-link>
 

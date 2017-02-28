@@ -6,25 +6,30 @@
         <div class="card">
           <div class="card-content">
             <div class="content">
+
               <p class="control has-addons is-pulled-right">
                 <router-link class="button" active-class=" is-primary" :to="paramsLink" exact>
                   <span class="icon is-small">
-                    <i class="fa fa-align-left"></i>
+                    <i class="fa fa-cog"></i>
                   </span>
-                  <span><span v-if="showDocs">URL PARAMETERS</span><span v-else>PARAMS</span></span>
+                  <span>CONFIGURATION</span>
                 </router-link>
                 <router-link class="button" active-class=" is-primary" :to="referenceLink">
                   <span class="icon is-small">
                     <i class="fa fa-pencil-square-o"></i>
                   </span>
-                  <span><span v-if="showDocs">USAGE</span> REFERENCE</span>
+                  <span>DOCS</span>
                 </router-link>
               </p>
+
               <h1>{{this.$route.params.id}}</h1>
+
               <div v-if="isParamsLink">
                 <p v-if="coreEndpoint && showDocs">Core endpoint, can't be removed. You can only alter the parameters.</p>
+
                 <h2>Access</h2>
-                <p v-if="showDocs">Usage of each custom endpoint can be restricted by login or specific roles. Click the <strong>URESTRICTED</strong> button to require login and then type-in a comma-separated list of roles. A user must have <strong>one of</strong> these roles included in their <strong>role</strong> property (column) in order to be able to access this endpoint.</p>
+                <doc name="endpoint1"></doc>
+
                 <div class="control is-grouped">
                   <p class="control has-addons is-expanded">
                     <a v-if="roles && login" @click="toggle('login')" class="button is-primary">RESTRICTED FOR</a>
@@ -33,22 +38,9 @@
                     <input v-model="roles" class="input is-expanded" type="text" :disabled="rolesDisabled" placeholder="Comma-separated list of roles, e.g.: 'moderator,admin'">
                   </p>
                 </div>
-                <h5 v-if="showDocs">Example</h5>
-                <p v-if="showDocs">Imagine the following data in the users collection</p>
-                <table v-if="showDocs" class="table is-striped">
-                  <thead>
-                    <tr><th>id</th><th>...</th><th>roles</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr><td><code>1</code></td><td>...</td><td><code>editor,moderator,storemanager,admin</code></td></tr>
-                    <tr><td><code>2</code></td><td>...</td><td><code>editor,storemanager</code></td></tr>
-                    <tr><td><code>3</code></td><td>...</td><td><code>editor,moderator</code></td></tr>
-                    <tr><td><code>4</code></td><td>...</td><td><span class="text-muted">(empty)</span></td></tr>
-                  </tbody>
-                </table>
-                <p v-if="showDocs">If you would restrict this endpoint by <code>admin,moderator</code>, only users <strong>1 and 3</strong> could use this endpoint, others would get the <em>403: Forbidden</em> HTTP error.</p>
-                <h5 v-if="showDocs">Catpcha</h5>
-                <p v-if="showDocs">Endpoints can also be protected by a captcha by switching the <strong>NO CAPTCHA</strong> button. In case of captcha protection, answer to the catpcha image must be supplied in the captcha parameter with each call to this endpoint. A captcha image can be retrieved before calling this endpoint from <code>GET /captcha</code>.</p>
+
+                <doc name="endpoint2"></doc>
+
                 <h2>Parameters</h2>
                 <table class="table is-striped" v-if="core || custom">
                   <thead>
@@ -68,8 +60,9 @@
                   </tbody>
                 </table>
                 <p v-else>There are no parameters defined for this endpoint.</p>
+
                 <h4>Add<span v-if="core || custom"> / Change</span> a Parameter</h4>
-                <p v-if="showDocs">Input an existing parameter name to change it or a new paramter name to add a new parameter to this endpoint.</p>
+                <doc name="endpoint3"></doc>
                 <form ref="editForm" @submit.prevent="edit">
                   <div class="control is-grouped">
                     <p class="control is-expanded">
@@ -98,55 +91,12 @@
                   </div>
                   <p><small v-if="currentRegexDesc">{{currentRegexDesc}}</small></p>
                 </form>
-                <div v-if="showDocs" style="margin-top: 20px;">
-                  <h4>Defined vs Undefined</h4>
-                  <p>You can either define an endpoint here in the UI or define it in the code. Either way, you will have to create a coded handler function. The difference is in the parameters validation and documenting.</p>
-                  <p>If you want to use the API Reference feature of Apiko, which automates the API documentation where possible, the endpoint has to be defined over this UI.</p>
-                  <h4>Validation</h4>
-                  <p>Handler functions for endpoints defined here in the UI receive already validated parameters in the <code>request.params</code> variable, while handlers for endpoints undefined here in the UI rececive the parameter values as received.</p>
-                  <p>See the server's /main.js for a few quick examples.</p>
-                  <pre><code>
-Apiko.on('GET /collection/action', (request, store) => {
-  // request.method contains the HTTP method received, uppercased, 'GET' in this case
 
-  // Now two cases can happen here:
+                <doc name="endpoint4"></doc>
 
-  // CASE 1: you have not defined the specified (URL) endpoint in Apiko GUI
-
-  // Request parameters are stored in the request.params property and are
-  // never validated. You have to validate them here.
-
-  if (request.params.foo) {
-  // In order to respond to the client, you need to call:
-    request.respondSuccess({any: 'data'}) // 200 OK
-  } else {
-  // If you are not happy, you can respond with an error:
-    request.respondError(400, 'Custom message', 76)
-    // args: HTTP status code, custom message, custom error code, all optional
-    // custom error codes should be > 100
-  }
-
-  // CASE 2: the specified (URL) endpoint is defined in Apiko GUI
-
-  // The params will be processed according to your Apiko GUI validation
-  // setup and this callback will never be called if they are invalid.
-
-  // Furthermore, if the specified endpoint is a special endpoint processed
-  // by Apiko itself (e.g. a user login at /users/login), the request.response
-  // property will be present and will contain an object describing how would
-  // Apiko normally respond to this request, for example:
-  //
-  // Error: { status: 401, message: 'The username parameter is missing.', code: 1 }
-  // Success: { status: 200, data: { session: 's43v094ioag345...' }}
-
-  // You always have to call request.respondSuccess() or request.respondError() in
-  // this handler to make the web server respond!
-})
-                  </code></pre>
-                </div>
                 <div v-if="!coreEndpoint">
                   <h2>Removal</h2>
-                  <p v-if="showDocs">Don't forget to <strong>SAVE</strong> to put the endpoint's removal in effect.</p>
+                  <doc name="endpoint5"></doc>
                   <button @click="remove()" class="button is-danger is-outlined"><span class="icon"><i class="fa fa-times"></i></span><span>REMOVE ENDPOINT</span></button>
                 </div>
               </div>
