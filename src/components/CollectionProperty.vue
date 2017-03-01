@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <form @submit.prevent="updateProperty">
+    <form @submit.prevent="updateCollectionProperty">
       <div class="control is-grouped">
         <p class="control is-expanded">
           <input v-model="propertyName" class="input" type="text" placeholder="Lowercase name, e.g.: 'author'">
@@ -187,9 +187,9 @@ export default {
         this.comment = property.comment
       }
     },
-    updateProperty () {
+    updateCollectionProperty () {
       // TODO check that name doesn't exist already
-      this.$store.commit('UPDATE_PROPERTY', this.propertySetup)
+      this.$store.commit('UPDATE_COLLECTION_PROPERTY', this.propertySetup)
       this.$parent.$forceUpdate()
       this.$emit('save')
     }

@@ -16,9 +16,6 @@
 
 <script>
 export default {
-  props: ['linkto'],
-  components: {
-  },
   data () {
     return {
       collections: this.$store.state.setup.collections
@@ -41,14 +38,13 @@ export default {
     }
   },
   methods: {
-    link (endpoint) {
-      if (this.linkto === 'localref') {
-        return '/endpoints/' + encodeURIComponent(endpoint) + '/reference'
-      } else if (this.linkto === 'globalref') {
-        return '/reference/' + encodeURIComponent(endpoint)
+    link (name) {
+      return {
+        name: this.$route.name === 'endpoint-reference' ? 'endpoint-reference' : 'endpoint',
+        params: {
+          id: name
+        }
       }
-
-      return '/endpoints/' + encodeURIComponent(endpoint)
     },
     isCore (endpoint) {
       if (this.$store.state.core.endpoints[endpoint]) {

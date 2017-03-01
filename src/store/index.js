@@ -64,6 +64,20 @@ export default new Vuex.Store({
     // is collection part of core ?
     isCoreCollection: state => name => {
       return !!state.core.collections[name]
+    },
+    // returns an endpoint's setup
+    endpoint: state => path => {
+      let endpoint = {
+        core: {},
+        setup: {}
+      }
+      if (typeof state.core.endpoints[path] !== 'undefined') {
+        endpoint.core = state.core.endpoints[path]
+      }
+      if (typeof state.setup.endpoints[path] !== 'undefined') {
+        endpoint.setup = state.setup.endpoints[path]
+      }
+      return endpoint
     }
   },
 
@@ -105,7 +119,7 @@ export default new Vuex.Store({
       localStorage.set('config', payload)
     },
     // update a property
-    'UPDATE_PROPERTY' (state, payload) {
+    'UPDATE_COLLECTION_PROPERTY' (state, payload) {
       if (typeof state.setup.collections[payload.collection] === 'undefined') {
         state.setup.collections[payload.collection] = {}
       }

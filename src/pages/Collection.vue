@@ -2,7 +2,7 @@
   <div class="page padded">
     <div class="columns is-mobile">
       <div class="column is-one-quarter">
-        <CollectionsList ref="list"></CollectionsList>
+        <CollectionsList></CollectionsList>
       </div>
       <div class="column">
         <div class="card">
@@ -75,7 +75,7 @@
 <script>
 import CollectionProperty from '../components/CollectionProperty'
 import CollectionsList from '../components/CollectionsList'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
@@ -91,7 +91,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['collection'])
+    ...mapGetters(['collection']),
+    ...mapState(['showDocs'])
   },
   created () {
     this.getCollection(this.$route.params.id)

@@ -21,17 +21,18 @@
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  props: ['linktodata'],
   computed: {
     ...mapState(['core', 'setup']),
     ...mapGetters(['isCoreCollection'])
   },
   methods: {
-    link (collection) {
-      if (this.linktodata) {
-        return '/collections/' + collection + '/data'
+    link (name) {
+      return {
+        name: this.$route.name === 'collection-data' ? 'collection-data' : 'collection',
+        params: {
+          id: name
+        }
       }
-      return '/collections/' + collection
     }
   }
 }

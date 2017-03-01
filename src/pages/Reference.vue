@@ -1,7 +1,9 @@
 <template>
 <div class="page padded">
     <div class="columns is-mobile">
-      <div class="column is-one-quarter"><EndpointsList ref="list" linkto="globalref"></EndpointsList></div>
+      <div class="column is-one-quarter">
+        <EndpointsList></EndpointsList>
+      </div>
       <div class="column">
         <div class="card">
           <div class="card-content">
@@ -47,14 +49,6 @@ export default {
   methods: {
     link (endpoint) {
       return '/reference/' + encodeURIComponent(endpoint)
-    }
-  },
-  beforeCreate () {
-    console.log('Checking if endpoints objects exist...')
-
-    if (!window.model.server.setup.endpoints) {
-      console.log('Creating the endpoints object.')
-      window.model.server.setup.endpoints = {}
     }
   }
 }

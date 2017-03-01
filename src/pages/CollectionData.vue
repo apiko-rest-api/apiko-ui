@@ -1,7 +1,9 @@
 <template>
   <div class="page padded">
     <div class="columns is-mobile">
-      <div class="column is-one-quarter"><CollectionsList linktodata="true"></CollectionsList></div>
+      <div class="column is-one-quarter">
+        <CollectionsList></CollectionsList>
+      </div>
       <div class="column">
         <div class="card">
           <div class="card-content">

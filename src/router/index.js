@@ -67,14 +67,16 @@ export default new VueRouter({
       }
     },
     {
-      path: '/endpoints/:id',
+      name: 'endpoint',
+      path: '/endpoints/:path',
       component: Endpoint,
       meta: {
         menu: true
       }
     },
     {
-      path: '/endpoints/:id/reference',
+      name: 'endpoint-reference',
+      path: '/endpoints/:path/reference',
       component: Endpoint,
       meta: {
         menu: true
