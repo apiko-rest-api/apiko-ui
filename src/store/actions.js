@@ -17,6 +17,10 @@ export default {
 
   // save configuration
   setupSave ({ commit, state }) {
-    // TODO
+    return api.put('/apiko/setup', {
+      setup: state.setup
+    }).then(res => {
+      commit('SETUP_SAVED')
+    })
   }
 }

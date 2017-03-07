@@ -21,6 +21,10 @@ export default {
     state.setup = state.originalSetup
   },
 
+  'SETUP_SAVED': (state) => {
+    state.originalSetup = state.setup
+  },
+
   'CORE': (state, payload) => {
     state.core = payload
   },
