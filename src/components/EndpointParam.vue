@@ -38,11 +38,19 @@ export default {
     this.getEndpointParam()
   },
   watch: {
-    method () {
-      this.getEndpointParam()
-    },
     path () {
       this.getEndpointParam()
+    }
+  },
+  methods: {
+    getEndpointParam () {
+      // TODO
+    },
+    updateEndpointParam () {
+      // TODO check that the name hasn't been changed for one that exists already
+      this.$store.commit('UPDATE_ENDPOINT_PARAM', this.paramSetup)
+      this.$parent.$forceUpdate()
+      this.$emit('save')
     }
   },
   computed: {
@@ -51,8 +59,19 @@ export default {
       return regex.length > 0 ? regex[0] : null
     },
     paramSetup () {
-      // TODO prepare param to be committed
-      return {}
+      let payload = {
+        path: this.path,
+        name: this.name,
+        originalName: null,
+        param: {
+          regex: this.validation,
+          required: this.required
+        }
+      }
+      if (this.param && this.param.name) {
+        payload.originalName = this.param.name
+      }
+      return payload
     }
   },
   data () {
@@ -104,16 +123,6 @@ export default {
           description: 'Any string that looks like a URL.'
         }
       ]
-    }
-  },
-  methods: {
-    getEndpointParam () {
-      // TODO
-    },
-    updateEndpointParam () {
-      this.$store.commit('UPDATE_ENDPOINT_PARAM', this.paramSetup)
-      this.$parent.$forceUpdate()
-      this.$emit('save')
     }
   }
 }

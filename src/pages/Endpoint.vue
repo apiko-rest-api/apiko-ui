@@ -24,7 +24,7 @@
                 </router-link>
               </p>
 
-              <h1>{{ this.path }}</h1>
+              <h1>{{ path }}</h1>
 
               <div v-if="$route.name === 'endpoint'">
 
@@ -57,7 +57,7 @@
 
                 <h4 style="margin-top: 30px">Add a Parameter</h4>
                 <doc name="endpoint3"></doc>
-                <endpoint-param></endpoint-param>
+                <endpoint-param :path="path"></endpoint-param>
 
                 <doc name="endpoint4"></doc>
 

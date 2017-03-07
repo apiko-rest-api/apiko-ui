@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="control">
-      <input type="checkbox" v-model="restrict">
+      <input type="checkbox" v-model="restrict" @change="updateEndpointAccess">
       Restricted
     </p>
       <p class="control">
@@ -11,8 +11,6 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-//
 export default {
   props: ['path'],
   created () {
@@ -21,13 +19,8 @@ export default {
   watch: {
     path () {
       this.getEndpointAccess()
-    },
-    restrict () {
-      this.updateEndpointAccess()
     }
   },
-  // computed: {
-  // },
   data () {
     return {
       restrict: false,

@@ -147,6 +147,34 @@ export default new Vuex.Store({
         delete state.setup.endpoints[payload.originalPath]
       }
       state.setup.endpoints[payload.path] = payload.endpoint
+    },
+    // update an endpoint
+    'UPDATE_ENDPOINT_ACCESS' (state, payload) {
+      if (typeof state.setup.endpoints[payload.path] === 'undefined') {
+        state.setup.endpoints[payload.path] = {}
+      }
+      if (payload.restrict) {
+        if (payload.roles) {
+          state.setup.endpoints[payload.path].restrict = payload.roles
+        } else {
+          state.setup.endpoints[payload.path].restrict = true
+        }
+      } else {
+        delete state.setup.endpoints[payload.path].restrict
+      }
+    },
+    // update an endpoint param
+    'UPDATE_ENDPOINT_PARAM' (state, payload) {
+      if (typeof state.setup.endpoints[payload.path] === 'undefined') {
+        state.setup.endpoints[payload.path] = {}
+      }
+      if (typeof state.setup.endpoints[payload.path].params === 'undefined') {
+        state.setup.endpoints[payload.path].params = {}
+      }
+      if (payload.originalName !== payload.name) {
+        delete state.setup.endpoints[payload.path].params[payload.originalName]
+      }
+      state.setup.endpoints[payload.path].params[payload.name] = payload.param
     }
   },
 
