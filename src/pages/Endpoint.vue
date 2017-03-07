@@ -72,7 +72,7 @@
                 </div>
               </div>
               <div v-else>
-                <EndpointReference :endpoint="name"></EndpointReference>
+                <EndpointReference :endpoint="path"></EndpointReference>
               </div>
             </div>
           </div>

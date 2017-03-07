@@ -4,8 +4,12 @@
       <div class="menu">
         <p class="menu-label">Endpoints</p>
         <ul class="menu-list">
-          <li><router-link v-for="(options, endpoint) in coreEndpoints" active-class="is-active" :to="link(endpoint)" exact><strong>{{endpoint}}</strong> <span class="tag is-light">core</span></router-link></li>
-          <li><router-link v-if="!isCore(endpoint)" v-for="(options, endpoint) in endpoints" active-class="is-active" :to="link(endpoint)" exact><strong>{{endpoint}}</strong></router-link></li>
+          <li>
+            <router-link v-for="(options, endpoint) in coreEndpoints" active-class="is-active" :to="link(endpoint)" exact><strong>{{endpoint}}</strong> <span class="tag is-light">core</span></router-link>
+          </li>
+          <li>
+            <router-link v-if="!isCore(endpoint)" v-for="(options, endpoint) in endpoints" active-class="is-active" :to="link(endpoint)" exact><strong>{{endpoint}}</strong></router-link>
+          </li>
         </ul>
       </div>
       <hr>
@@ -42,7 +46,7 @@ export default {
       return {
         name: this.$route.name === 'endpoint-reference' ? 'endpoint-reference' : 'endpoint',
         params: {
-          id: name
+          path: name
         }
       }
     },
