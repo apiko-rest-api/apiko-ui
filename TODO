@@ -1,0 +1,5 @@
+- state
+  - core
+  - setup = deepmerge de core + setup
+  - pour chaque endpoint, param et collection, on set "isCore" : yes/no/overridden
+- on utilise que setup à l'affichage
