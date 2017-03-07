@@ -1,7 +1,6 @@
 import localStorage from 'store'
 
 export default {
-  loading: false,
   apiUrl: null,
   config: {
     protocol: null,

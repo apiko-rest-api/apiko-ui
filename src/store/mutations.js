@@ -3,10 +3,6 @@ import api from './api'
 import localStorage from 'store'
 
 export default {
-  toggleLoading (state, truth) {
-    state.loading = truth
-  },
-
   'SHOW_DOCS' (state, payload) {
     state.showDocs = payload || !state.showDocs
     // store to local storage

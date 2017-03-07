@@ -1,7 +1,5 @@
 <template>
   <div id="app">
-    <loading></loading>
-
     <div class="card text-muted" v-if="showMenu">
       <div class="card-content" style="padding: 4px 10px 4px 10px;">
         <span class="icon is-small" style="position: relative; top: 4px;"><i class="fa fa-bar-chart"></i></span> <span>318 requests past 30 days</span>
@@ -84,13 +82,9 @@
 
 <script>
 import localStorage from 'store'
-import Loading from './components/Loading'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  components: {
-    Loading
-  },
   data () {
     return {
       menuActive: false
