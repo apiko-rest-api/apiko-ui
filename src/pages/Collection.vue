@@ -38,21 +38,26 @@
                   <tr><th>Name</th><th>Database Type</th><th></th></tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(prop, propName) in properties.core">
-                    <td><strong>{{propName}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
-                    <td>{{prop.type}}</td>
-                    <td><span class="tag is-light">core</span></td>
-                  </tr>
-                  <tr v-for="(prop, propName) in properties.setup">
+                  <tr v-for="(prop, propName) in collection(name)">
                     <template v-if="editProperty === propName">
                       <td colspan="3" class="edit-property">
                         <collection-property :collection="name" :name="propName" @save="propertyEdited"></collection-property>
                       </td>
                     </template>
                     <template v-else>
-                      <td><strong>{{propName}}</strong><br v-if="prop.comment"><small v-if="prop.comment" class="text-muted">{{prop.comment}}</small></td>
-                      <td>{{prop.type}}</td>
                       <td>
+                        <strong>{{propName}}</strong>
+                        <div v-if="prop.comment">
+                          <small v-if="prop.comment" class="text-muted">{{prop.comment}}</small>
+                        </div>
+                      </td>
+                      <td>
+                        {{prop.type}}
+                      </td>
+                      <td v-if="isCoreProperty(name, propName) === 'core'">
+                        <span class="tag is-light">core</span>
+                      </td>
+                      <td v-else>
                         <button @click="editProperty = propName" class="button is-danger is-inverted"><span class="icon"><i class="fa fa-edit"></i></span></button>
                         <button @click="removeProperty(propName)" class="button is-danger is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button>
                       </td>
@@ -91,25 +96,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['collection']),
-    ...mapState(['showDocs'])
-  },
-  created () {
-    this.getCollection(this.$route.params.id)
-  },
-  watch: {
-    '$route.params.id' (name) {
-      this.getCollection(name)
+    ...mapGetters(['collection', 'isCoreProperty']),
+    ...mapState(['showDocs']),
+    name () {
+      return this.$route.params.id
     }
   },
   methods: {
-    getCollection (name) {
-      this.name = name
-      this.properties = this.$store.getters.collection(name)
-      if (Object.keys(this.properties.core).length === 0 && Object.keys(this.properties.setup).length === 0) {
-        this.$router.push('/collections')
-      }
-    },
     removeProperty (name) {
       this.$store.commit('REMOVE_PROPERTY', {
         collection: this.name,

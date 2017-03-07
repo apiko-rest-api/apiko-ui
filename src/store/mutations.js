@@ -17,6 +17,10 @@ export default {
     state.originalSetup = payload
   },
 
+  'SETUP_RESTORE': (state) => {
+    state.setup = state.originalSetup
+  },
+
   'CORE': (state, payload) => {
     state.core = payload
   },
@@ -102,5 +106,10 @@ export default {
       delete state.setup.endpoints[payload.path].params[payload.originalName]
     }
     state.setup.endpoints[payload.path].params[payload.name] = payload.param
+  },
+
+  // remove an endpoint param
+  'REMOVE_PARAM' (state, payload) {
+    delete state.setup.endpoints[payload.path].params[payload.name]
   }
 }

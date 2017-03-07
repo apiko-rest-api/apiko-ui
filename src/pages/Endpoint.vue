@@ -36,20 +36,28 @@
                 <doc name="endpoint2"></doc>
 
                 <h2>Parameters</h2>
-                <table class="table is-striped" v-if="params.core || params.custom">
+                <table class="table is-striped" v-if="configuration.params">
                   <thead>
                     <tr><th>Name</th><th>Validation</th><th></th></tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(param, name) in params.core">
-                      <td><strong>{{name}}</strong> <span v-if="param.required" class="tag is-dark">required</span></td>
-                      <td v-if="param.regex"><code>{{param.regex}}</code></td><td v-else><span class="tag is-danger">none</span></td>
-                      <td><span class="tag is-light">core</span></td>
-                    </tr>
-                    <tr v-for="(param, name) in params.custom">
-                      <td><strong>{{name}}</strong> <span v-if="param.required" class="tag is-dark">required</span></td>
-                      <td v-if="param.regex"><code>{{param.regex}}</code></td><td v-else><span class="tag is-danger">none</span></td>
-                      <td><button @click="removeParam(name)" class="button is-danger is-small is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button></td>
+                    <tr v-for="(param, name) in configuration.params">
+                      <td>
+                        <strong>{{name}}</strong>
+                        <span v-if="param.required" class="tag is-dark">required</span>
+                      </td>
+                      <td v-if="param.regex">
+                        <code>{{param.regex}}</code>
+                      </td>
+                      <td v-else>
+                        <span class="tag is-danger">none</span>
+                      </td>
+                      <td v-if="isCoreEndpointParam(path, name) === 'core'">
+                        <span class="tag is-light">core</span>
+                      </td>
+                      <td v-else>
+                        <button @click="removeParam(name)" class="button is-danger is-small is-inverted"><span class="icon"><i class="fa fa-times"></i></span></button>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -61,14 +69,14 @@
 
                 <doc name="endpoint4"></doc>
 
-                <div v-if="!isCore">
+                <div v-if="isCoreEndpoint(path)" class="notification is-warning" style="margin-top: 30px">
+                  This core endpoint <strong>can't be removed</strong>.
+                </div>
+
+                <div v-else>
                   <h2 style="margin-top: 30px">Removal</h2>
                   <doc name="endpoint5"></doc>
                   <button @click="remove()" class="button is-danger is-outlined"><span class="icon"><i class="fa fa-times"></i></span><span>REMOVE ENDPOINT</span></button>
-                </div>
-
-                <div v-if="isCore" class="notification is-warning" style="margin-top: 30px">
-                  This core endpoint <strong>can't be removed</strong>.
                 </div>
               </div>
               <div v-else>
@@ -96,45 +104,28 @@ export default {
     EndpointsList,
     EndpointReference
   },
-  created () {
-    this.getEndpoint()
-  },
-  watch: {
-    '$route.params.path' () {
-      this.getEndpoint()
-    }
-  },
   data () {
     return {
-      path: null,
-      configuration: null,
       // param that is currently edited
       editParam: null
     }
   },
   computed: {
-    isCore () {
-      return !!this.$store.state.core.endpoints[this.path]
+    ...mapGetters(['endpoint', 'isCoreEndpoint', 'isCoreEndpointParam']),
+    path () {
+      return this.$route.params.path
     },
-    params () {
-      let params = {
-        core: {},
-        setup: {}
-      }
-      if (this.configuration && this.configuration.core && this.configuration.core.params) {
-        params.core = this.configuration.core.params
-      }
-      if (this.configuration && this.configuration.setup && this.configuration.setup.params) {
-        params.setup = this.configuration.setup.params
-      }
-      return params
-    },
-    ...mapGetters(['endpoint'])
+    configuration () {
+      return this.endpoint(this.path)
+    }
   },
   methods: {
-    getEndpoint () {
-      this.path = this.$route.params.path
-      this.configuration = this.endpoint(this.path)
+    removeParam (name) {
+      this.$store.commit('REMOVE_PARAM', {
+        path: this.path,
+        name
+      })
+      this.$forceUpdate()
     }
   }
 }

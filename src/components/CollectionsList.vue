@@ -6,8 +6,12 @@
         <p class="menu-label">Collections</p>
 
         <ul class="menu-list">
-          <li v-for="(properties, name) in core.collections"><router-link active-class="is-active" :to="link(name)"><strong>{{name}}</strong> <span class="tag is-light">core</span></router-link></li>
-          <li v-for="(properties, name) in setup.collections" v-if="!isCoreCollection(name)"><router-link active-class="is-active" :to="link(name)"><strong>{{name}}</strong></router-link></li>
+          <li v-for="(properties, name) in setup.collections">
+            <router-link active-class="is-active" :to="link(name)">
+              <strong>{{name}}</strong>
+              <span class="tag is-light">{{ isCoreCollection(name) }}</span>
+            </router-link>
+          </li>
         </ul>
 
       </div>
@@ -22,7 +26,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapState(['core', 'setup']),
+    ...mapState(['setup']),
     ...mapGetters(['isCoreCollection'])
   },
   methods: {

@@ -5,10 +5,10 @@
         <p class="menu-label">Endpoints</p>
         <ul class="menu-list">
           <li>
-            <router-link v-for="(options, endpoint) in coreEndpoints" active-class="is-active" :to="link(endpoint)" exact><strong>{{endpoint}}</strong> <span class="tag is-light">core</span></router-link>
-          </li>
-          <li>
-            <router-link v-if="!isCore(endpoint)" v-for="(options, endpoint) in endpoints" active-class="is-active" :to="link(endpoint)" exact><strong>{{endpoint}}</strong></router-link>
+            <router-link v-for="(options, path) in setup.endpoints" active-class="is-active" :to="link(path)" exact>
+              <strong>{{ path }}</strong>
+              <span class="tag is-light">{{ isCoreEndpoint(path) }}</span>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -19,42 +19,21 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
+
 export default {
-  data () {
-    return {
-      collections: this.$store.state.setup.collections
-    }
-  },
   computed: {
-    coreEndpoints () {
-      if (this.$store.state.core.endpoints) {
-        return this.$store.state.core.endpoints
-      }
-
-      return null
-    },
-    endpoints () {
-      if (this.$store.state.setup.endpoints) {
-        return this.$store.state.setup.endpoints
-      }
-
-      return null
-    }
+    ...mapState(['setup']),
+    ...mapGetters(['isCoreEndpoint'])
   },
   methods: {
-    link (name) {
+    link (path) {
       return {
         name: this.$route.name === 'endpoint-reference' ? 'endpoint-reference' : 'endpoint',
         params: {
-          path: name
+          path
         }
       }
-    },
-    isCore (endpoint) {
-      if (this.$store.state.core.endpoints[endpoint]) {
-        return true
-      }
-      return false
     }
   }
 }

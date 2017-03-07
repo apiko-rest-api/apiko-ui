@@ -1,49 +1,79 @@
+import _ from 'lodash'
+
 export default {
   setupIsDifferent (state) {
-    return state.setup !== state.originalSetup
+    const originalSetup = JSON.parse(JSON.stringify(state.originalSetup))
+    const setup = JSON.parse(JSON.stringify(state.setup))
+    return _.isEqual(setup, originalSetup)
   },
 
   // returns a collection's setup
   collection: state => name => {
-    let collection = {
-      core: {},
-      setup: {}
-    }
-    if (typeof state.core.collections[name] !== 'undefined') {
-      collection.core = state.core.collections[name]
-    }
-    if (typeof state.setup.collections[name] !== 'undefined') {
-      collection.setup = state.setup.collections[name]
-    }
-    return collection
+    return state.setup.collections[name] || {}
   },
 
   // returns a property's setup
   property: (state, getters) => (collectionName, name) => {
     const collection = getters.collection(collectionName)
-    if (!collection || !collection.setup || typeof collection.setup[name] === 'undefined') {
-      return null
-    }
-    return collection.setup[name]
-  },
-
-  // is collection part of core ?
-  isCoreCollection: state => name => {
-    return !!state.core.collections[name]
+    return collection[name] || {}
   },
 
   // returns an endpoint's setup
   endpoint: state => path => {
-    let endpoint = {
-      core: {},
-      setup: {}
+    return state.setup.endpoints[path] || {}
+  },
+
+  // is collection part of core ?
+  isCoreCollection: state => name => {
+    if (typeof state.core.collections[name] === 'undefined') {
+      return 'custom'
     }
-    if (typeof state.core.endpoints[path] !== 'undefined') {
-      endpoint.core = state.core.endpoints[path]
+    if (_.isEqual(state.core.collections[name], state.setup.collections[name])) {
+      return 'core'
+    } else {
+      return 'overridden'
     }
-    if (typeof state.setup.endpoints[path] !== 'undefined') {
-      endpoint.setup = state.setup.endpoints[path]
+  },
+
+  // is property part of core ?
+  isCoreProperty: state => (collection, name) => {
+    if (typeof state.core.collections[collection] === 'undefined') {
+      return 'custom'
     }
-    return endpoint
+    if (typeof state.core.collections[collection][name] === 'undefined') {
+      return 'custom'
+    }
+    if (_.isEqual(state.core.collections[collection][name], state.setup.collections[collection][name])) {
+      return 'core'
+    } else {
+      return 'overridden'
+    }
+  },
+
+  // is endpoint part of core ?
+  isCoreEndpoint: state => path => {
+    if (typeof state.core.endpoints[path] === 'undefined') {
+      return 'custom'
+    }
+    if (_.isEqual(state.core.endpoints[path], state.setup.endpoints[path])) {
+      return 'core'
+    } else {
+      return 'overridden'
+    }
+  },
+
+  // is endpoint param part of core ?
+  isCoreEndpointParam: state => (path, name) => {
+    if (typeof state.core.endpoints[path] === 'undefined') {
+      return 'custom'
+    }
+    if (typeof state.core.endpoints[path].params[name] === 'undefined') {
+      return 'custom'
+    }
+    if (_.isEqual(state.core.endpoints[path].params[name], state.setup.endpoints[path].params[name])) {
+      return 'core'
+    } else {
+      return 'overridden'
+    }
   }
 }
