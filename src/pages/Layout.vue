@@ -7,13 +7,13 @@
           <span class="icon">
             <i class="fa fa-database"></i>
           </span>
-          <span>Collections <span v-if="showDocs">(DB Tables)</span></span>
+          <span>Collections</span>
         </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/endpoints">
           <span class="icon">
             <i class="fa fa-map-signs"></i>
           </span>
-          <span>Endpoints <span v-if="showDocs">(URLs)</span></span>
+          <span>Endpoints</span>
         </router-link>
       </div>
 
@@ -30,17 +30,11 @@
       </span>
 
       <div class="nav-right nav-menu">
-        <router-link class="nav-item is-tab" active-class="is-active" to="/reference">
-          <span class="icon">
-            <i class="fa fa-file-text"></i>
-          </span>
-          <span><span v-if="showDocs">This API's</span> Reference</span>
-        </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/documentation">
           <span class="icon">
             <i class="fa fa-book"></i>
           </span>
-          <span>Apiko Docs</span>
+          <span>Documentation</span>
         </router-link>
         <a class="nav-item" @click="$store.commit('SHOW_DOCS')" title="Toggle In-place Documentation">
           <span class="icon">

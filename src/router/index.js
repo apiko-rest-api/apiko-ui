@@ -46,10 +46,6 @@ export default new VueRouter({
           component: require('../pages/Endpoint')
         },
         {
-          path: '/reference',
-          component: require('../pages/Reference')
-        },
-        {
           path: '/documentation',
           component: require('../pages/Documentation')
         }
