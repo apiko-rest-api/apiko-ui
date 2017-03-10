@@ -48,6 +48,10 @@ export default new VueRouter({
         {
           path: '/documentation',
           component: require('../pages/Documentation')
+        },
+        {
+          path: '/stats',
+          component: require('../pages/Stats')
         }
       ]
     }
