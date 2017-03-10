@@ -3,91 +3,57 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-import Config from '../pages/Config'
-import Dashboard from '../pages/Dashboard'
-import Collection from '../pages/Collection'
-import Collections from '../pages/Collections'
-import Endpoint from '../pages/Endpoint'
-import Endpoints from '../pages/Endpoints'
-import Reference from '../pages/Reference'
-import Documentation from '../pages/Documentation'
-import CollectionData from '../pages/CollectionData'
-
 export default new VueRouter({
   routes: [
     {
       path: '/config',
-      component: Config,
-      meta: {
-        menu: false
-      }
-    },
-    {
-      path: '/documentation',
-      component: Documentation,
-      meta: {
-        menu: true
-      }
+      component: require('../pages/Config')
     },
     {
       path: '/',
-      component: Dashboard,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      path: '/collections',
-      component: Collections,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      name: 'collection',
-      path: '/collections/:id',
-      component: Collection,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      name: 'collection-data',
-      path: '/collections/:id/data',
-      component: CollectionData,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      path: '/endpoints',
-      component: Endpoints,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      name: 'endpoint',
-      path: '/endpoints/:path',
-      component: Endpoint,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      name: 'endpoint-reference',
-      path: '/endpoints/:path/reference',
-      component: Endpoint,
-      meta: {
-        menu: true
-      }
-    },
-    {
-      path: '/reference',
-      component: Reference,
-      meta: {
-        menu: true
-      }
+      component: require('../pages/Layout'),
+      children: [
+        {
+          path: '/',
+          component: require('../pages/Dashboard')
+        },
+        {
+          path: '/collections',
+          component: require('../pages/Collections')
+        },
+        {
+          name: 'collection',
+          path: '/collections/:id',
+          component: require('../pages/Collection')
+        },
+        {
+          name: 'collection-data',
+          path: '/collections/:id/data',
+          component: require('../pages/CollectionData')
+        },
+        {
+          path: '/endpoints',
+          component: require('../pages/Endpoints')
+        },
+        {
+          name: 'endpoint',
+          path: '/endpoints/:path',
+          component: require('../pages/Endpoint')
+        },
+        {
+          name: 'endpoint-reference',
+          path: '/endpoints/:path/reference',
+          component: require('../pages/Endpoint')
+        },
+        {
+          path: '/reference',
+          component: require('../pages/Reference')
+        },
+        {
+          path: '/documentation',
+          component: require('../pages/Documentation')
+        }
+      ]
     }
   ]
 })

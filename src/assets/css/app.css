@@ -1,0 +1,61 @@
+html,
+body {
+  display: block;
+  min-height: 100vh;
+}
+
+body {
+  background-color: #eeeeee;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition-property: opacity;
+  transition-duration: .25s;
+}
+
+.fade-enter-active {
+  transition-delay: .25s;
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+
+.page {
+  padding-bottom: 50px;
+}
+
+.page.padded {
+  padding: 20px;
+}
+
+.page.centered {
+  padding: 20px;
+}
+
+
+/* content */
+
+.text-muted {
+  color: #bbbbbb;
+}
+
+@media screen and (min-width: 800px) {
+  .page.centered {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .page.centered {
+    width: 35%;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}

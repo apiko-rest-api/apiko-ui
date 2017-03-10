@@ -1,7 +1,7 @@
 <template>
   <div class="page centered">
     <div style="text-align: center; margin-bottom: 12px;">
-      <img src="../assets/inappicon104x50.svg" alt="Apiko">
+      <img src="../assets/images/inappicon104x50.svg" alt="Apiko">
     </div>
     <article v-if="error" class="message is-warning">
       <div class="message-body">{{ error }}</div>
@@ -57,10 +57,18 @@ export default {
       this.$store.commit('CONFIG', originalConfig)
     }
     // try to connect to API, redirect if success
-    this.$store.dispatch('connect').then(() => {
-      const redirectPath = this.$route.query.redirect || '/'
-      this.$router.push(redirectPath)
-    })
+    if (this.$route.query.update !== null) {
+      this.$store.dispatch('connect').then(() => {
+        const redirectPath = this.$route.query.redirect || '/'
+        this.$router.push(redirectPath)
+      })
+    } else if (originalConfig) {
+      this.host = originalConfig.host
+      this.port = originalConfig.port
+      this.protocol = originalConfig.protocol
+      this.prefix = originalConfig.prefix
+      this.secret = originalConfig.secret
+    }
   },
   computed: {
     buttonClasses () {

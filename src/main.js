@@ -4,8 +4,8 @@ import Vue from 'vue'
 import store from './store'
 import router from './router'
 
-// components
-import App from './App'
+// css
+require('./assets/css/app.css')
 
 // docs
 import DocsBase from './components/docs/Base'
@@ -13,10 +13,10 @@ Vue.component('doc', DocsBase)
 
 /* eslint-disable no-new */
 new Vue({
+  el: '#app',
   router,
   store,
-  el: '#app',
-  render: h => h(App),
+  render: h => h('router-view'),
   created () {
     // go straight to the config page on app startup
     this.$router.push({
