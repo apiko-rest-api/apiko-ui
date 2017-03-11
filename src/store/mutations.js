@@ -10,6 +10,7 @@ export default {
   },
 
   'SETUP': (state, payload) => {
+    state.setupIsDifferent = false
     state.setup = payload
   },
 
@@ -17,7 +18,8 @@ export default {
     state.originalSetup = payload
   },
 
-  'SETUP_RESTORE': (state) => {
+  'SETUP_REVERT': (state) => {
+    state.setupIsDifferent = false
     state.setup = state.originalSetup
   },
 
@@ -50,6 +52,7 @@ export default {
 
   // update a property
   'UPDATE_COLLECTION_PROPERTY' (state, payload) {
+    state.setupIsDifferent = true
     if (typeof state.setup.collections[payload.collection] === 'undefined') {
       state.setup.collections[payload.collection] = {}
     }
@@ -61,11 +64,13 @@ export default {
 
   // remove a property
   'REMOVE_PROPERTY' (state, payload) {
+    state.setupIsDifferent = true
     delete state.setup.collections[payload.collection][payload.name]
   },
 
   // create a new collection
   'CREATE_COLLECTION' (state, name) {
+    state.setupIsDifferent = true
     state.setup.collections[name] = {
       id: {
         type: 'INTEGER'
@@ -76,6 +81,7 @@ export default {
 
   // update an endpoint
   'UPDATE_ENDPOINT' (state, payload) {
+    state.setupIsDifferent = true
     if (payload.originalPath !== payload.path) {
       delete state.setup.endpoints[payload.originalPath]
     }
@@ -84,6 +90,7 @@ export default {
 
   // update an endpoint
   'UPDATE_ENDPOINT_ACCESS' (state, payload) {
+    state.setupIsDifferent = true
     if (typeof state.setup.endpoints[payload.path] === 'undefined') {
       state.setup.endpoints[payload.path] = {}
     }
@@ -100,6 +107,7 @@ export default {
 
   // update an endpoint param
   'UPDATE_ENDPOINT_PARAM' (state, payload) {
+    state.setupIsDifferent = true
     if (typeof state.setup.endpoints[payload.path] === 'undefined') {
       state.setup.endpoints[payload.path] = {}
     }
@@ -114,6 +122,7 @@ export default {
 
   // remove an endpoint param
   'REMOVE_PARAM' (state, payload) {
+    state.setupIsDifferent = true
     delete state.setup.endpoints[payload.path].params[payload.name]
   }
 }

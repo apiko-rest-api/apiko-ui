@@ -1,12 +1,6 @@
 import _ from 'lodash'
 
 export default {
-  setupIsDifferent (state) {
-    const originalSetup = JSON.parse(JSON.stringify(state.originalSetup))
-    const setup = JSON.parse(JSON.stringify(state.setup))
-    return _.isEqual(setup, originalSetup)
-  },
-
   // returns a collection's setup
   collection: state => name => {
     return state.setup.collections[name] || {}

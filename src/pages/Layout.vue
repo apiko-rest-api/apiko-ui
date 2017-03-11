@@ -82,7 +82,7 @@
     <div v-if="setupIsDifferent" class="notification is-warning">
       Settings updated.
 
-      <a @click="$store.commit('SETUP_RESTORE')" class="button pull-right">
+      <a @click="$store.commit('SETUP_REVERT')" class="button pull-right">
         <span class="icon">
           <i class="fa fa-refresh"></i>
         </span>
@@ -100,8 +100,7 @@
 </template>
 
 <script>
-import localStorage from 'store'
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   data () {
@@ -110,19 +109,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['setupIsDifferent']),
-    ...mapState(['showDocs'])
+    ...mapState(['setupIsDifferent', 'showDocs'])
   },
   methods: {
     toggleMenu () {
       this.menuActive = !this.menuActive
-    }
-  },
-  mounted () {
-    // show docs ?
-    const showDocs = localStorage.get('showDocs')
-    if (showDocs) {
-      this.$store.commit('SHOW_DOCS', showDocs)
     }
   }
 }

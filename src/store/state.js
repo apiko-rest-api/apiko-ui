@@ -18,5 +18,6 @@ export default {
     collections: {},
     endpoints: {}
   },
+  setupIsDifferent: false,
   showDocs: localStorage.get('showDocs')
 }
