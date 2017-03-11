@@ -5,6 +5,8 @@ import store from './store'
 import router from './router'
 
 // css
+require('bulma/css/bulma.css')
+require('font-awesome/css/font-awesome.min.css')
 require('./assets/css/app.css')
 
 // docs
