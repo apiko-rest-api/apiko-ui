@@ -75,14 +75,14 @@ export default {
       }
     },
     updateEndpoint () {
-      // TODO check that path doesn't exist already
+      const path = this.endpoint.method + ' ' + this.endpoint.path
       this.$store.commit('UPDATE_ENDPOINT', {
         originalPath: this.path,
-        path: this.endpoint.path,
+        path,
         endpoint: {}
       })
       this.$parent.$forceUpdate()
-      this.$emit('save')
+      this.$emit('save', path)
     }
   }
 }

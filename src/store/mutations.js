@@ -77,7 +77,6 @@ export default {
         type: 'INTEGER'
       }
     }
-    // TODO add a bunch of default endpoints
   },
 
   // update an endpoint
@@ -87,6 +86,12 @@ export default {
       delete state.setup.endpoints[payload.originalPath]
     }
     state.setup.endpoints[payload.path] = payload.endpoint
+  },
+
+  // remove an endpoint
+  'REMOVE_ENDPOINT' (state, payload) {
+    state.setupIsDifferent = true
+    delete state.setup.endpoints[payload.path]
   },
 
   // update an endpoint

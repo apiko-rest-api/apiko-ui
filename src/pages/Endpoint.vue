@@ -69,14 +69,14 @@
 
                 <doc name="endpoint4"></doc>
 
-                <div v-if="isCoreEndpoint(path)" class="notification is-warning" style="margin-top: 30px">
+                <div v-if="isCoreEndpoint(path) ===  'core'" class="notification is-warning" style="margin-top: 30px">
                   This core endpoint <strong>can't be removed</strong>.
                 </div>
 
                 <div v-else>
                   <h2 style="margin-top: 30px">Removal</h2>
                   <doc name="endpoint5"></doc>
-                  <button @click="remove()" class="button is-danger is-outlined"><span class="icon"><i class="fa fa-times"></i></span><span>REMOVE ENDPOINT</span></button>
+                  <button @click="removeEndpoint" class="button is-danger is-outlined"><span class="icon"><i class="fa fa-times"></i></span><span>REMOVE ENDPOINT</span></button>
                 </div>
               </div>
               <div v-else>
@@ -120,6 +120,12 @@ export default {
     }
   },
   methods: {
+    removeEndpoint () {
+      this.$store.commit('REMOVE_ENDPOINT', {
+        path: this.path
+      })
+      this.$router.push('/endpoints')
+    },
     removeParam (name) {
       this.$store.commit('REMOVE_PARAM', {
         path: this.path,
