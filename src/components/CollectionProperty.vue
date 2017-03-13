@@ -70,7 +70,7 @@ export default {
       if (!this.propertyName) {
         return true
       }
-      if (this.length.length === 0) {
+      if (this.length && this.length.length === 0) {
         return true
       }
       if (!this.propertyType.lengthValidation) {
