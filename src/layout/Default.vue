@@ -7,13 +7,13 @@
           <span class="icon">
             <i class="fa fa-database"></i>
           </span>
-          <span>Collections</span>
+          <span class="link-label">Collections</span>
         </router-link>
         <router-link class="nav-item is-tab" active-class="is-active" to="/endpoints">
           <span class="icon">
             <i class="fa fa-map-signs"></i>
           </span>
-          <span>Endpoints</span>
+          <span class="link-label">Endpoints</span>
         </router-link>
       </div>
 
@@ -28,7 +28,7 @@
           <span class="icon">
             <i class="fa fa-book"></i>
           </span>
-          <span>Documentation</span>
+          <span class="link-label">Documentation</span>
         </router-link>
         <a class="nav-item is-tab" @click="$store.commit('SHOW_DOCS')" title="Toggle In-place Documentation">
           <span class="icon">
@@ -74,5 +74,25 @@ export default {
 nav a span:last-child {
   display: inline-block;
   margin-left: 6px;
+}
+
+@media screen and (max-width: 550px) {
+  .nav-menu a span.link-label {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav-menu {
+    position: absolute;
+    top: 14px;
+    background: transparent;
+  }
+  .nav-left {
+    left: 0;
+  }
+  .nav-right {
+    right: 0;
+  }
 }
 </style>
