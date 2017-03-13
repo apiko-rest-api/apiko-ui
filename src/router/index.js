@@ -11,7 +11,7 @@ export default new VueRouter({
     },
     {
       path: '/',
-      component: require('../pages/Layout'),
+      component: require('../layout/Default'),
       children: [
         {
           path: '/',
