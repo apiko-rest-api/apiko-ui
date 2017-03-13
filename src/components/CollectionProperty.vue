@@ -38,7 +38,6 @@ export default {
     ...mapGetters(['property']),
     // build the final object that will be saved
     propertySetup () {
-      // TODO check that the name hasn't been changed for one that exists already
       let payload = {
         collection: this.collection,
         originalName: this.name,
@@ -89,7 +88,6 @@ export default {
     name () {
       this.propertyName = this.name
       this.getPropertyData()
-      // TODO check that name doesn't exist already
     }
   },
   data () {
@@ -166,11 +164,14 @@ export default {
     }
   },
   methods: {
-    getPropertyData () {
+    resetPropertyData () {
       // defaults
       this.type = 'INTEGER'
       this.length = ''
       this.comment = ''
+    },
+    getPropertyData () {
+      this.resetPropertyData()
       // check in store if property is available
       const property = this.property(this.collection, this.propertyName)
       if (!property) {
@@ -188,10 +189,13 @@ export default {
       }
     },
     updateCollectionProperty () {
-      // TODO check that name doesn't exist already
       this.$store.commit('UPDATE_COLLECTION_PROPERTY', this.propertySetup)
       this.$parent.$forceUpdate()
       this.$emit('save')
+
+      // reset data to defaults
+      this.propertyName = ''
+      this.resetPropertyData()
     }
   }
 }
