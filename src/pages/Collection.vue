@@ -89,7 +89,6 @@ export default {
   },
   data () {
     return {
-      name: '',
       properties: {},
       // property that is currently edited
       editProperty: null

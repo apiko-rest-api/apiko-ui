@@ -24,6 +24,7 @@ export default {
   },
 
   'SETUP_SAVED': (state) => {
+    state.setupIsDifferent = false
     state.originalSetup = state.setup
   },
 
