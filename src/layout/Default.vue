@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="layout-page">
 
     <nav class="nav">
       <div class="nav-left nav-menu">
@@ -75,6 +75,18 @@ nav a span:last-child {
   display: inline-block;
   margin-left: 6px;
 }
+
+
+/**
+ * 1. Stick footer to bottom.
+ */
+
+.layout-page {
+  display: flex; /* [1] */
+  flex-direction: column; /* [1] */
+  min-height: 100vh; /* [1] */
+}
+
 
 @media screen and (max-width: 550px) {
   .nav-menu a span.link-label {

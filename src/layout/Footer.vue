@@ -35,6 +35,7 @@ export default {}
 footer {
   position: relative;
   padding-top: 4rem;
+  margin-top: auto; /* Stick footer to bottom. */
 }
 footer .stats, footer .config {
   position: absolute;
