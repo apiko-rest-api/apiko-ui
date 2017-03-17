@@ -27,5 +27,15 @@ new Vue({
         redirect: this.$route.path
       }
     })
+
+    // confirm exit if it have unsaved changes
+    window.addEventListener('beforeunload', event => {
+      if (this.$store.state.setupIsDifferent) {
+        const confirmMessage = 'It looks like you have been editing something.\nIf you leave before saving, your changes will be lost'
+
+        event.returnValue = confirmMessage
+        return confirmMessage
+      }
+    })
   }
 })
