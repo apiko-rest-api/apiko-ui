@@ -69,5 +69,21 @@ export default {
     } else {
       return 'overridden'
     }
+  },
+
+  // returns existing user roles
+  rolesList: state => {
+    let roles = ['admin', 'moderator']
+    for (let end in state.setup.endpoints) {
+      let restrict = state.setup.endpoints[end].restrict
+      if (restrict && Array.isArray(restrict)) {
+        restrict.forEach((role) => {
+          if (roles.indexOf(role) === -1) {
+            roles.push(role)
+          }
+        })
+      }
+    }
+    return roles
   }
 }

@@ -1,5 +1,6 @@
 import api from './api'
 
+import Vue from 'vue'
 import localStorage from 'store'
 
 export default {
@@ -97,17 +98,22 @@ export default {
   // update an endpoint
   'UPDATE_ENDPOINT_ACCESS' (state, payload) {
     state.setupIsDifferent = true
+
     if (typeof state.setup.endpoints[payload.path] === 'undefined') {
       state.setup.endpoints[payload.path] = {}
     }
-    if (payload.restrict) {
-      if (payload.roles) {
-        state.setup.endpoints[payload.path].restrict = payload.roles
-      } else {
-        state.setup.endpoints[payload.path].restrict = true
-      }
-    } else {
-      delete state.setup.endpoints[payload.path].restrict
+
+    delete state.setup.endpoints[payload.path].restrict
+    delete state.setup.endpoints[payload.path].ownership
+    switch (payload.restrict) {
+      case 'logged-in':
+        Vue.set(state.setup.endpoints[payload.path], 'restrict', true)
+        break
+      case 'role-based':
+        Vue.set(state.setup.endpoints[payload.path], 'restrict', payload.roles)
+        if (payload.ownership === true) {
+          Vue.set(state.setup.endpoints[payload.path], 'ownership', true)
+        }
     }
   },
 
