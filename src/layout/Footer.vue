@@ -5,7 +5,7 @@
       <span class="icon">
         <i class="fa fa-bar-chart"></i>
       </span>
-      318 requests past 30 days
+      {{ statsCounter }} requests past 30 days
     </router-link>
 
     <router-link to="/config?update" class="config">
@@ -28,7 +28,29 @@
 </template>
 
 <script>
-export default {}
+import api from '../store/api'
+
+export default {
+  data () {
+    return {
+      statsCounter: '?'
+    }
+  },
+  created () {
+    this.getStatsCounter()
+  },
+  methods: {
+    getStatsCounter () {
+      api.get('/apiko/stats', {
+        params: {
+          only_counter: true
+        }
+      }).then(res => {
+        this.statsCounter = res.data.counter
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
