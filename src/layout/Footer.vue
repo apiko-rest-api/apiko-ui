@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import api from '../store/api'
+import stats from '../api/stats'
 
 export default {
   data () {
@@ -41,11 +41,7 @@ export default {
   },
   methods: {
     getStatsCounter () {
-      api.get('/apiko/stats', {
-        params: {
-          only_counter: true
-        }
-      }).then(res => {
+      stats.getStatsCounter().then(res => {
         this.statsCounter = res.data.counter
       })
     }

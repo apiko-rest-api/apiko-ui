@@ -9,6 +9,12 @@ require('bulma/css/bulma.css')
 require('font-awesome/css/font-awesome.min.css')
 require('./assets/css/app.css')
 
+// ElementUI
+import ElementUI from 'element-ui'
+import locale from 'element-ui/lib/locale/lang/en'
+import 'element-ui/lib/theme-default/index.css'
+Vue.use(ElementUI, { locale })
+
 // docs
 import DocsBase from './components/docs/Base'
 Vue.component('doc', DocsBase)

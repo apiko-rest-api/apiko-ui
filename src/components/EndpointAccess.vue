@@ -62,13 +62,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
-
-// ElementUI
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
-Vue.use(ElementUI)
 
 export default {
   props: ['path'],
