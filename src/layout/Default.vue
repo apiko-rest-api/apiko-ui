@@ -31,9 +31,6 @@
           <span class="link-label">Documentation</span>
         </router-link>
         <a class="nav-item is-tab" @click="$store.commit('SHOW_DOCS')" title="Toggle In-place Documentation">
-          <!-- <span class="icon">
-            <i class="fa fa-question-circle-o"></i>
-          </span> -->
           <span class="icon">
             <i v-if="showDocs" class="fa fa-toggle-on"></i>
             <i v-else class="fa fa-toggle-off"></i>
