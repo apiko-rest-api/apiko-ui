@@ -2,7 +2,7 @@
   <div id="app" class="layout-page">
 
     <nav class="nav">
-      <div class="nav-left nav-menu">
+      <div class="nav-left">
         <router-link class="nav-item is-tab" active-class="is-active" to="/collections">
           <span class="icon">
             <i class="fa fa-database"></i>
@@ -23,12 +23,12 @@
         </router-link>
       </div>
 
-      <div class="nav-right nav-menu">
+      <div class="nav-right">
         <router-link class="nav-item is-tab" active-class="is-active" to="/documentation">
           <span class="icon">
             <i class="fa fa-book"></i>
           </span>
-          <span class="link-label">Documentation</span>
+          <span class="link-label is-hidden-mobile">Documentation</span>
         </router-link>
         <a class="nav-item is-tab" @click="$store.commit('SHOW_DOCS')" title="Toggle In-place Documentation">
           <span class="icon">
@@ -88,6 +88,9 @@ nav a span:last-child {
   min-height: 100vh; /* [1] */
 }
 
+.nav-right {
+  display: flex;
+}
 
 @media screen and (max-width: 550px) {
   .nav-menu a span.link-label {
