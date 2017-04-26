@@ -32,9 +32,10 @@
         </router-link>
         <a class="nav-item is-tab" @click="$store.commit('SHOW_DOCS')" title="Toggle In-place Documentation">
           <span class="icon">
-            <i v-if="showDocs" class="fa fa-question-circle"></i>
-            <i v-else class="fa fa-question-circle-o"></i>
+            <i v-if="showDocs" class="fa fa-toggle-on"></i>
+            <i v-else class="fa fa-toggle-off"></i>
           </span>
+          <span class="link-label">Help</span>
         </a>
       </div>
     </nav>
