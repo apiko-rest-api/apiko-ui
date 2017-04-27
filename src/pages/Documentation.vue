@@ -22,23 +22,11 @@
       <div class="card-content">
         <div class="columns">
           <div class="column">
-              <h2 class="title has-text-centered">Guide Topic
-              </h2>
-              <hr>
-              <div class="content">
-                <ul>
-                  <li>In fermentum leo eu lectus mollis, quis dictum mi aliquet.</li>
-                  <li>Morbi eu nulla lobortis, lobortis est in, fringilla felis.</li>
-                  <li>
-                    <ul>
-                      <li>
-                        In fermentum leo eu lectus mollis, quis dictum mi aliquet.
-                      </li>
-                    </ul>
-                  </li>
-                  <li>Aliquam nec felis in sapien venenatis viverra fermentum nec lectus.</li>
-                  <li>Ut non enim metus.</li>
-                </ul>
+            <h2 class="title has-text-centered">
+              Guide Topic
+            </h2>
+            <hr>
+            <div id="topics" class="content" v-html="topics">
             </div>
           </div>
           <div class="column">
@@ -67,16 +55,21 @@
 <script>
   import axios from 'axios'
   import moment from 'moment'
+  import got from 'got'
+  import showdown from 'showdown'
+  import cheerio from 'cheerio'
 
   export default {
     data () {
       return {
         query: 'vue.js',
-        questions: []
+        questions: [],
+        topics: ''
       }
     },
     mounted () {
       this.so()
+      this.getTopics()
     },
     methods: {
       so () {
@@ -85,6 +78,25 @@
         .then((res) => {
           this.questions = res.data.items
         })
+      },
+      getTopics () {
+        got('https://raw.githubusercontent.com/apiko-rest-api/apiko-userguide/master/Index.md')
+          .then((res) => {
+            const converter = new showdown.Converter()
+            const index = res.body.indexOf('* ')
+            res.body = res.body.substring(index)
+            const html = converter.makeHtml(res.body)
+            const $ = cheerio.load(html)
+            const elements = $('a')
+            for (let i = 0; i < elements.length; i++) {
+              let oldHref = $(elements[i]).attr('href')
+              $(elements[i]).attr('href', 'https://github.com/apiko-rest-api/apiko-userguide/blob/master/' + oldHref)
+            }
+            this.topics = $.html()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       }
     },
     filters: {
