@@ -20,33 +20,44 @@
 
     <div class="card">
       <div class="card-content">
-        <div class="columns">
-          <div class="column">
-            <h2 class="title has-text-centered">
-              Guide Topic
-            </h2>
-            <hr>
-            <div id="topics" class="content" v-html="topics">
-            </div>
-          </div>
-          <div class="column">
-              <h2 class="title has-text-centered">Stack Overflow Q/A</h2>
+        <section v-if="!showGuideArea">
+          <div class="columns">
+            <div class="column">
+              <h2 class="title has-text-centered">
+                Guide Topic
+              </h2>
               <hr>
-            <div class="content">
-              <div v-if="questions.length">
-                <div class="question" v-for="q in questions">
-                  <h2><a v-html="q.title" :href="q.link" target="_blank"></a></h2>
-                  <p class="tags">
-                    <span v-if="q.is_answered" class="tag is-primary">Answered</span>
-                    <span v-for="tag in q.tags" class="tag is-light">{{tag}}</span>
-                  </p>
-                  <p>{{q.answer_count}} answers, asked {{q.creation_date | datetime}} by {{q.owner.display_name}}</p>
-                </div>
+              <div class="content" v-html="topics">
               </div>
-              <div v-else class="has-text-centered">No questions matching this criteria.</div>
+            </div>
+            <div class="column">
+                <h2 class="title has-text-centered">Stack Overflow Q/A</h2>
+                <hr>
+              <div class="content">
+                <div v-if="questions.length">
+                  <div class="question" v-for="q in questions">
+                    <h2><a v-html="q.title" :href="q.link" target="_blank"></a></h2>
+                    <p class="tags">
+                      <span v-if="q.is_answered" class="tag is-primary">Answered</span>
+                      <span v-for="tag in q.tags" class="tag is-light">{{tag}}</span>
+                    </p>
+                    <p>{{q.answer_count}} answers, asked {{q.creation_date | datetime}} by {{q.owner.display_name}}</p>
+                  </div>
+                </div>
+                <div v-else class="has-text-centered">No questions matching this criteria.</div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+        <section v-else>
+          <h2 class="title has-text-centered">
+            Guide Topic
+          </h2>
+          <hr />
+          <button class="btn-back" @click="toggleShowGuideArea">Back</button>
+          <div class="content" v-html="topicContent"></div>
+          <button class="btn-back" @click="toggleShowGuideArea">Back</button>
+        </section>
       </div>
     </div>
   </div>
@@ -64,12 +75,15 @@
       return {
         query: 'vue.js',
         questions: [],
-        topics: ''
+        topics: '',
+        topicContent: '',
+        showGuideArea: false
       }
     },
     mounted () {
       this.so()
       this.getTopics()
+      window.vm.getTopicContent = this.getTopicContent
     },
     methods: {
       so () {
@@ -89,14 +103,32 @@
             const $ = cheerio.load(html)
             const elements = $('a')
             for (let i = 0; i < elements.length; i++) {
-              let oldHref = $(elements[i]).attr('href')
-              $(elements[i]).attr('href', 'https://github.com/apiko-rest-api/apiko-userguide/blob/master/' + oldHref)
+              let link = 'https://raw.githubusercontent.com/apiko-rest-api/apiko-userguide/master/' + $(elements[i]).attr('href')
+              $(elements[i]).removeAttr('href')
+              $(elements[i]).attr('onclick', 'vm.getTopicContent(\'' + link + '\')')
             }
             this.topics = $.html()
           })
           .catch((error) => {
             console.log(error)
           })
+      },
+      getTopicContent (link) {
+        console.log('click')
+        this.showGuideArea = true
+        got(link)
+          .then((res) => {
+            const converter = new showdown.Converter()
+            let html = converter.makeHtml(res.body)
+            this.topicContent = html
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
+      toggleShowGuideArea () {
+        this.showGuideArea = !this.showGuideArea
+        this.topicContent = ''
       }
     },
     filters: {
@@ -123,5 +155,13 @@
 
 .question p.tags {
   margin-bottom: 6px;
+}
+
+.btn-back {
+  background-color: #fff;
+  border: 1px solid #888;
+  border-radius: 3px;
+  padding: 10px 20px;
+  margin: 10px;
 }
 </style>
