@@ -69,7 +69,6 @@
   import got from 'got'
   import showdown from 'showdown'
   import cheerio from 'cheerio'
-  // import scrollToElement from 'scroll-to-element'
 
   export default {
     data () {
@@ -105,10 +104,12 @@
             const elements = $('a')
             for (let i = 0; i < elements.length; i++) {
               let link = 'https://raw.githubusercontent.com/apiko-rest-api/apiko-userguide/master/' + $(elements[i]).attr('href')
-              let elementTitle = $(elements[i]).text()
               $(elements[i]).removeAttr('href')
-              // $(elements[i]).parent().attr('id', elementTitle)
-              $(elements[i]).attr('onclick', 'vm.getTopicContent(\'' + link + '\', \'' + elementTitle + '\')')
+              if (elements[i].parent.parent.root) {
+                $(elements[i]).attr('onclick', 'vm.getTopicContent(\'' + link + '\')')
+              } else {
+                $(elements[i]).addClass('no-link')
+              }
             }
             this.topics = $.html()
           })
@@ -116,21 +117,12 @@
             console.log(error)
           })
       },
-      getTopicContent (link, elementTitle) {
-        console.log('click')
+      getTopicContent (link) {
         this.showGuideArea = true
         got(link)
           .then((res) => {
             const converter = new showdown.Converter()
-            let html = converter.makeHtml(res.body)
-            let dividedTopics = html.split('<h')
-            dividedTopics.forEach((el) => {
-              el = '<h' + el
-              console.log(el)
-              if (el.includes(elementTitle)) {
-                html = el
-              }
-            })
+            const html = converter.makeHtml(res.body)
             this.topicContent = html
           })
           .catch((error) => {
