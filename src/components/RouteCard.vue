@@ -14,30 +14,28 @@
       <div class="card-content" v-show='showCard[i]'>
         <div class="content">
           <table class='table is-narrow'>
-            <thead>
-              <tr>
-                <th>Route</th>
-                <th>Methods</th>
-              </tr>
-            </thead>
             <tbody>
               <tr v-for='(child, childKey) in route.children'>
                 <td>
-                  <strong>{{ childKey }}</strong>
-                </td>
-                <td>
+                  <div>
+                    <strong v-if='childKey !== "/"'>{{ childKey }}</strong>
+                    <strong v-else>root <span class="path-root">(/{{ key }})</span></strong>
+                  </div>
                   <ul>
                     <li v-if='childKey !== "/"'>
                       <router-link active-class="is-active" :to="link(`${method} /${key}${childKey}`)" tag='span' class='tag' :class='classForMethod(method)' v-for='method in child' exact>
-                        {{ method }}
-                        <span class="mini tag is-dark" >{{ isCoreEndpoint(`${method} /${key}${childKey}`) }}</span>
+                        {{ method }}&nbsp;
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'core'" class="fa fa-dot-circle-o" title="This is an Apiko core endpoint."></i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'overridden'" class="fa fa-wrench" title="This is an overriden core endpoint."></i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'custom'" class="fa fa-puzzle-piece" title="This is a custom endpoint."></i>
                       </router-link>
                     </li>
                     <li v-else>
-                      <router-link active-class="is-active" :to="link(`${method} /${key}`)" tag='span' class='tag' :class='classForMethod(method)' v-for='method in child' exact
->
-                        {{ method }}
-                        <span class="mini tag is-dark" >{{ isCoreEndpoint(`${method} /${key}`) }}</span>
+                      <router-link active-class="is-active" :to="link(`${method} /${key}`)" tag='span' class='tag' :class='classForMethod(method)' v-for='method in child' exact>
+                        {{ method }}&nbsp;
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'core'" class="fa fa-dot-circle-o" title="This is an Apiko core endpoint."></i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'overridden'" class="fa fa-wrench" title="This is an overriden core endpoint."></i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'custom'" class="fa fa-puzzle-piece" title="This is a custom endpoint."></i>
                       </router-link>
                     </li>
                   </ul>
@@ -125,5 +123,9 @@ export default {
   border-radius: 2px;
   height: auto;
   padding: 0 5px;
+}
+
+.path-root {
+  color: #bbbbbb;
 }
 </style>
