@@ -33,17 +33,23 @@ export default new VueRouter({
         },
         {
           path: '/endpoints',
-          component: require('../pages/Endpoints')
-        },
-        {
-          name: 'endpoint',
-          path: '/endpoints/:path',
-          component: require('../pages/Endpoint')
-        },
-        {
-          name: 'endpoint-reference',
-          path: '/endpoints/:path/reference',
-          component: require('../pages/Endpoint')
+          component: require('../pages/Endpoints'),
+          children: [
+            {
+              path: '/',
+              component: require('../components/EndpointFormView')
+            },
+            {
+              name: 'endpoint',
+              path: '/endpoints/:path',
+              component: require('../components/EndpointMethodView')
+            },
+            {
+              name: 'endpoint-reference',
+              path: '/endpoints/:path/reference',
+              component: require('../components/EndpointMethodView')
+            }
+          ]
         },
         {
           path: '/documentation',

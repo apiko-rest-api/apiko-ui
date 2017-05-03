@@ -1,32 +1,22 @@
 <template>
-  <div class="page padded">
-    <div class="columns is-mobile">
-      <div class="column is-one-quarter">
-        <EndpointsList></EndpointsList>
-      </div>
-      <div class="column">
-        <div class="card">
-          <div class="card-content">
-            <div class="content">
+  <div class="endpoint-form-view-container">
+    <h1>Endpoints</h1>
 
-              <router-view/>
+    <doc name="endpoints1"></doc>
 
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <h3>Create an Endpoint</h3>
+    <endpoint-form @save="endpointCreated"></endpoint-form>
+
+    <doc name="endpoints2"></doc>
   </div>
 </template>
 
 <script>
 import EndpointForm from '../components/EndpointForm'
-import EndpointsList from '../components/EndpointsList'
 
 export default {
   components: {
-    EndpointForm,
-    EndpointsList
+    EndpointForm
   },
   data () {
     return {
@@ -48,4 +38,8 @@ export default {
     }
   }
 }
+
 </script>
+
+<style lang="css">
+</style>
