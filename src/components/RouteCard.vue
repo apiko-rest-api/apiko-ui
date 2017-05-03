@@ -23,19 +23,31 @@
                   </div>
                   <ul>
                     <li v-if='childKey !== "/"'>
-                      <router-link active-class="is-active" :to="link(`${method} /${key}${childKey}`)" tag='span' class='tag' :class='classForMethod(method)' v-for='method in child' exact>
+                      <router-link active-class="is-active" :to="link(`${method} /${key}${childKey}`)" tag='span' class='tag tooltip-parent' :class='classForMethod(method)' v-for='method in child' exact>
                         {{ method }}&nbsp;
-                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'core'" class="fa fa-dot-circle-o" title="This is an Apiko core endpoint."></i>
-                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'overridden'" class="fa fa-wrench" title="This is an overriden core endpoint."></i>
-                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'custom'" class="fa fa-puzzle-piece" title="This is a custom endpoint."></i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'core'" class="fa fa-dot-circle-o ">
+                          <tooltip label="This is an Apiko core endpoint."/>
+                        </i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'overridden'" class="fa fa-wrench">
+                          <tooltip label="This is an overriden core endpoint."/>
+                        </i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'custom'" class="fa fa-puzzle-piece">
+                          <tooltip label="This is a custom endpoint."/>
+                        </i>
                       </router-link>
                     </li>
                     <li v-else>
-                      <router-link active-class="is-active" :to="link(`${method} /${key}`)" tag='span' class='tag' :class='classForMethod(method)' v-for='method in child' exact>
+                      <router-link active-class="is-active" :to="link(`${method} /${key}`)" tag='span' class='tag tooltip-parent' :class='classForMethod(method)' v-for='method in child' exact>
                         {{ method }}&nbsp;
-                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'core'" class="fa fa-dot-circle-o" title="This is an Apiko core endpoint."></i>
-                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'overridden'" class="fa fa-wrench" title="This is an overriden core endpoint."></i>
-                        <i v-if="isCoreEndpoint(`${method} /${key}${childKey}`) === 'custom'" class="fa fa-puzzle-piece" title="This is a custom endpoint."></i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}`) === 'core'" class="fa fa-dot-circle-o">
+                          <tooltip label="This is an Apiko core endpoint."/>
+                        </i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}`) === 'overridden'" class="fa fa-wrench">
+                          <tooltip label="This is an overriden core endpoint."/>
+                        </i>
+                        <i v-if="isCoreEndpoint(`${method} /${key}`) === 'custom'" class="fa fa-puzzle-piece">
+                          <tooltip label="This is a custom endpoint."/>
+                        </i>
                       </router-link>
                     </li>
                   </ul>
@@ -51,6 +63,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import Tooltip from './Tooltip'
 
 export default {
   props: ['routes'],
@@ -88,6 +101,9 @@ export default {
     toggle (i) {
       this.showCard.splice(i, 1, !this.showCard[i])
     }
+  },
+  components: {
+    Tooltip
   }
 }
 </script>
