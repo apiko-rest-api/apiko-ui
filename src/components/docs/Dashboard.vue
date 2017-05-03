@@ -17,7 +17,7 @@
               <em>Beware that editing collections change your database's schema.</em>
             </p>
             <p>
-              Read more about collections in <a href="#">Apiko documentation</a>.
+              Read more about collections in <a href="#/documentation">Apiko documentation</a>.
             </p>
 
             <h4>Endpoints</h4>
@@ -25,7 +25,7 @@
               Endpoints are the URL exposed by your API. Some are generated automatically according to the collection's structure, and you can add endpoints with a custom handler code. Learn more about custom endpoints in the documentation.
             </p>
             <p>
-              Read more about endpoints in <a href="#">Apiko documentation</a>.
+              Read more about endpoints in <a href="#/documentation">Apiko documentation</a>.
             </p>
 
           </div>
