@@ -9,14 +9,7 @@
           <div class="card-content">
             <div class="content">
 
-              <h1>Endpoints</h1>
-
-              <doc name="endpoints1"></doc>
-
-              <h3>Create an Endpoint</h3>
-              <endpoint-form @save="endpointCreated"></endpoint-form>
-
-              <doc name="endpoints2"></doc>
+              <router-view/>
 
             </div>
           </div>
