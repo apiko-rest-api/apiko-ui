@@ -20,7 +20,8 @@ import DocsBase from './components/docs/Base'
 Vue.component('doc', DocsBase)
 
 /* eslint-disable no-new */
-new Vue({
+/* eslint-disable no-unused-vars */
+var vm = new Vue({
   el: '#app',
   router,
   store,
@@ -45,3 +46,5 @@ new Vue({
     })
   }
 })
+
+window.vm = vm
