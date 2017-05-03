@@ -44,7 +44,7 @@
                     <p>{{q.answer_count}} answers, asked {{q.creation_date | datetime}} by {{q.owner.display_name}}</p>
                   </div>
                 </div>
-                <div v-else class="has-text-centered">No questions matching this criteria.</div>
+                <div v-else class="has-text-centered">No questions with an <strong>apiko</strong> tag.</div>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
   export default {
     data () {
       return {
-        query: 'vue.js',
+        query: 'apiko',
         questions: [],
         topics: '',
         topicContent: '',
