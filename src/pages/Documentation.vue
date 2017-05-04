@@ -55,8 +55,10 @@
           </h2>
           <hr />
           <button class="btn-back" @click="toggleShowGuideArea">Back</button>
+          <button class="btn-edit" @click="editUserGuide(path)">Edit on GitHub</button>
           <div class="content" v-html="topicContent"></div>
           <button class="btn-back" @click="toggleShowGuideArea">Back</button>
+          <button class="btn-edit" @click="editUserGuide(path)">Edit on GitHub</button>
         </section>
       </div>
     </div>
@@ -77,6 +79,7 @@
         questions: [],
         topics: '',
         topicContent: '',
+        path: '',
         showGuideArea: false
       }
     },
@@ -103,7 +106,7 @@
             const $ = cheerio.load(html)
             const elements = $('a')
             for (let i = 0; i < elements.length; i++) {
-              let link = 'https://raw.githubusercontent.com/apiko-rest-api/apiko-userguide/master/' + $(elements[i]).attr('href')
+              let link = $(elements[i]).attr('href')
               $(elements[i]).removeAttr('href')
               if (elements[i].parent.parent.root) {
                 $(elements[i]).attr('onclick', 'vm.getTopicContent(\'' + link + '\')')
@@ -119,11 +122,12 @@
       },
       getTopicContent (link) {
         this.showGuideArea = true
-        got(link)
+        got('https://raw.githubusercontent.com/apiko-rest-api/apiko-userguide/master/' + link)
           .then((res) => {
             const converter = new showdown.Converter()
             const html = converter.makeHtml(res.body)
             this.topicContent = html
+            this.path = link
           })
           .catch((error) => {
             console.log(error)
@@ -132,6 +136,10 @@
       toggleShowGuideArea () {
         this.showGuideArea = !this.showGuideArea
         this.topicContent = ''
+      },
+      editUserGuide (path) {
+        let link = 'https://github.com/apiko-rest-api/apiko-userguide/edit/master/' + path
+        window.open(link, '_blank')
       }
     },
     filters: {
@@ -164,6 +172,15 @@
   background-color: #fff;
   border: 1px solid #888;
   border-radius: 3px;
+  padding: 10px 20px;
+  margin: 10px;
+}
+
+.btn-edit {
+  background-color: #fff;
+  border: 1px solid #888;
+  border-radius: 3px;
+  float: right;
   padding: 10px 20px;
   margin: 10px;
 }
