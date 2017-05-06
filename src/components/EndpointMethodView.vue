@@ -71,7 +71,7 @@
       </div>
     </div>
     <div v-else>
-      <EndpointReference :endpoint="path"></EndpointReference>
+      <EndpointReference :path="path"></EndpointReference>
     </div>
   </div>
 </template>
