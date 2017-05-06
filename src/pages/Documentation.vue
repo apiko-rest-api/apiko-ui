@@ -20,46 +20,42 @@
 
     <div class="card">
       <div class="card-content">
-        <section v-if="!showGuideArea">
-          <div class="columns">
-            <div class="column">
-              <h2 class="title has-text-centered">
-                Guide Topic
-              </h2>
-              <hr>
+        <div class="columns">
+          <div class="column">
+            <h2 class="title has-text-centered">
+              Guide Topic
+            </h2>
+            <hr>
+            <section v-if="!showGuideArea">
               <div class="content" v-html="topics">
               </div>
-            </div>
-            <div class="column">
-                <h2 class="title has-text-centered">Stack Overflow Q/A</h2>
-                <hr>
-              <div class="content">
-                <div v-if="questions.length">
-                  <div class="question" v-for="q in questions">
-                    <h2><a v-html="q.title" :href="q.link" target="_blank"></a></h2>
-                    <p class="tags">
-                      <span v-if="q.is_answered" class="tag is-primary">Answered</span>
-                      <span v-for="tag in q.tags" class="tag is-light">{{tag}}</span>
-                    </p>
-                    <p>{{q.answer_count}} answers, asked {{q.creation_date | datetime}} by {{q.owner.display_name}}</p>
-                  </div>
+            </section>
+            <section v-else>
+              <button class="btn-back" @click="toggleShowGuideArea">Back</button>
+              <button class="btn-edit" @click="editUserGuide(path)">Edit on GitHub</button>
+              <div class="content" v-html="topicContent"></div>
+              <button class="btn-back" @click="toggleShowGuideArea">Back</button>
+              <button class="btn-edit" @click="editUserGuide(path)">Edit on GitHub</button>
+            </section>
+          </div>
+          <div class="column">
+              <h2 class="title has-text-centered">Stack Overflow Q/A</h2>
+              <hr>
+            <div class="content">
+              <div v-if="questions.length">
+                <div class="question" v-for="q in questions">
+                  <h2><a v-html="q.title" :href="q.link" target="_blank"></a></h2>
+                  <p class="tags">
+                    <span v-if="q.is_answered" class="tag is-primary">Answered</span>
+                    <span v-for="tag in q.tags" class="tag is-light">{{tag}}</span>
+                  </p>
+                  <p>{{q.answer_count}} answers, asked {{q.creation_date | datetime}} by {{q.owner.display_name}}</p>
                 </div>
-                <div v-else class="has-text-centered">No questions with an <strong>apiko</strong> tag.</div>
               </div>
+              <div v-else class="has-text-centered">No questions with an <strong>apiko</strong> tag.</div>
             </div>
           </div>
-        </section>
-        <section v-else>
-          <h2 class="title has-text-centered">
-            Guide Topic
-          </h2>
-          <hr />
-          <button class="btn-back" @click="toggleShowGuideArea">Back</button>
-          <button class="btn-edit" @click="editUserGuide(path)">Edit on GitHub</button>
-          <div class="content" v-html="topicContent"></div>
-          <button class="btn-back" @click="toggleShowGuideArea">Back</button>
-          <button class="btn-edit" @click="editUserGuide(path)">Edit on GitHub</button>
-        </section>
+        </div>
       </div>
     </div>
   </div>
