@@ -17,6 +17,7 @@ export default {
 
   // save configuration
   setupSave ({ commit, state }) {
+    console.log(state.setup.endpoints)
     return api.put('/apiko/setup', {
       setup: state.setup
     }).then(res => {
