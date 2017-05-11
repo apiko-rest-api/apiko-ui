@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.15.3",
     "bulma": "^0.3.2",
+    "chart.js": "^2.5.0",
     "cheerio": "^0.22.0",
     "compression-webpack-plugin": "^0.4.0",
     "element-ui": "^1.2.4",
