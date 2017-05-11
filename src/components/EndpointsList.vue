@@ -123,10 +123,6 @@ export default {
       return '/' + routeArr.join('/')
     }
   },
-  created () {
-    console.log('created')
-    console.log(this.methodFilter)
-  },
   components: {
     RouteCard
   }
