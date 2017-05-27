@@ -27,9 +27,7 @@
               <h1>{{this.$route.params.id}}</h1>
 
               <doc name="collection-data"></doc>
-
-              <p>Haven't had time to implement this yet, hold on please (or use phpMyAdmin or someting to manage your data for now).</p>
-
+              <collections-data :url='propertiesLink'/>
             </div>
           </div>
         </div>
@@ -40,17 +38,19 @@
 
 <script>
 import CollectionsList from '../components/CollectionsList'
+import CollectionsData from '../components/CollectionsData'
 
 export default {
   components: {
-    CollectionsList
+    CollectionsList,
+    CollectionsData
   },
   computed: {
     dataLink () {
       return '/collections/' + this.$route.params.id + '/data'
     },
     propertiesLink () {
-      return '/collections/' + this.$route.params.id
+      return this.$route.params.id
     }
   }
 }
