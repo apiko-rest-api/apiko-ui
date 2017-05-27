@@ -19,13 +19,13 @@
           <label class='label'>{{col['name']}}</label>
           <p class="control">
             <template v-if='col["name"]=="password"'>
-              <input class="input" type="password" :placeholder="`Enter ${col['name'].toLowerCase()}`">
+              <input :name="col['name']" class="input" type="password" :placeholder="`Enter ${col['name'].toLowerCase()}`">
             </template>
             <template v-else-if='col["type"]=="number"'>
-              <input class="input" type="number" :placeholder="`Enter ${col['type'].toLowerCase()}`">
+              <input :name="col['name']" class="input" type="number" :placeholder="`Enter ${col['type'].toLowerCase()}`">
             </template>
             <template v-else>
-              <input class="input" type="text" :placeholder="`Enter ${col['type'].toLowerCase()}`">
+              <input :name="col['name']" class="input" type="text" :placeholder="`Enter ${col['type'].toLowerCase()}`">
             </template>
           </p>
         </div>
@@ -58,7 +58,8 @@ export default {
   data () {
     return {
       collectionStore: null,
-      inputCount: 1
+      inputCount: 1,
+      formValues: []
     }
   },
   computed: {
@@ -74,6 +75,7 @@ export default {
       }
     },
     getCols () {
+      this.formValues = []
       let cols = []
       let collectionCols = this.setup.collections[this.url]
       let type, limit
