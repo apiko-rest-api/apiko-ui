@@ -12,27 +12,32 @@
         </div>
       </div>
     </div>
-    <div v-for='count in inputCount'>
-      <label class='label inline-block'> {{ count }}) </label>
-      <div v-for='col in getCols()' class='inline-block'>
-        <div class="field">
-          <label class='label'>{{col['name']}}</label>
-          <p class="control">
-            <template v-if='col["name"]=="password"'>
-              <input :name="col['name']" class="input" type="password" :placeholder="`Enter ${col['name'].toLowerCase()}`">
-            </template>
-            <template v-else-if='col["type"]=="number"'>
-              <input :name="col['name']" class="input" type="number" :placeholder="`Enter ${col['type'].toLowerCase()}`">
-            </template>
-            <template v-else>
-              <input :name="col['name']" class="input" type="text" :placeholder="`Enter ${col['type'].toLowerCase()}`">
-            </template>
-          </p>
+
+    <div id='data-form'>
+      <div v-for='count in inputCount'>
+        <label class='label inline-block'> {{ count }}) </label>
+        <div v-for='col in getCols()' class='inline-block'>
+          <div class="field">
+            <label class='label'>{{col['name']}}</label>
+            <p class="control">
+              <template v-if='col["name"]=="password"'>
+                <input :name="col['name']" class="input" type="password" :placeholder="`Enter ${col['name'].toLowerCase()}`">
+              </template>
+              <template v-else-if='col["type"].toLowerCase() == "integer"'>
+                <input :name="col['name']" class="input" type="number" :placeholder="`Enter ${col['type'].toLowerCase()}`">
+              </template>
+              <template v-else>
+                <input :name="col['name']" class="input" type="text" :placeholder="`Enter ${col['type'].toLowerCase()}`">
+              </template>
+            </p>
+          </div>
         </div>
       </div>
     </div>
+
+
     <div class="field" v-if='inputCount > 0'>
-      <button class='button is-primary' type="button" name="button">Submit</button>
+      <button class='button is-primary' type="button" name="button" @click='addToDatabase'>Submit</button>
     </div>
     <template v-if='collectionStore'>
       <table class='table' v-if='collectionStore.length > 0'>
@@ -102,6 +107,25 @@ export default {
           console.log(res.data)
           this.collectionStore = res.data
         })
+    },
+    addToDatabase () {
+      let inputs = document.querySelectorAll('#data-form input')
+      let reqData = {}
+      let reqHolder = []
+      for (let i = 0; i <= inputs.length; i++) {
+        console.log(Object.keys(reqData).length)
+        if (Object.keys(reqData).length === 3) {
+          reqHolder.push(reqData)
+          reqData = {}
+          if (inputs[i]) {
+            reqData[inputs[i].name] = inputs[i].value || ''
+          }
+        } else {
+          reqData[inputs[i].name] = inputs[i].value || ''
+        }
+      }
+      console.log(reqData)
+      console.log(reqHolder)
     }
   },
   created () {
