@@ -37,17 +37,38 @@
 
 
     <div class="field" v-if='inputCount > 0'>
-      <button class='button is-primary' type="button" name="button" @click='addToDatabase'>Submit</button>
+      <button class='button is-primary' type="button" name="button" @click='requestCreate'>Submit</button>
     </div>
-    <template v-if='collectionStore'>
+    <hr>
+    <template v-if='collectionStore && collectionStore.length > 0'>
+      <button class="button is-danger" @click='deleteSelected'>Delete selected rows</button>
+      <button class="button is-warning" @click='enableEdits'>Edit selected rows</button>
+      <button class="button is-info" @click='editSelected'>Submit edits</button>
       <table class='table' v-if='collectionStore.length > 0'>
       <thead>
         <tr>
-          <th>S.no</th>
+          <th><input type="checkbox" v-model='selectAll'>&emsp;Select</th>
+          <th v-for='prop in Object.keys(collectionStore[0])'>
+            <template v-if='hiddenProps.indexOf(prop) === -1'>
+              {{ prop }}
+            </template>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <td>1</td>
+        <tr v-for='collection in collectionStore'>
+          <td><input type="checkbox" @click='selectionTrack' v-model="collection['selected']"></td>
+          <td v-for='prop in Object.keys(collection)'>
+            <template v-if='hiddenProps.indexOf(prop) === -1'>
+              <template v-if="collection['isEditable']">
+                <input class="input" type="text" v-model="collection[prop]">
+              </template>
+              <template v-else>
+                {{ collection[prop] }}
+              </template>
+            </template>
+          </td>
+        </tr>
       </tbody>
     </table>
   </template>
@@ -64,12 +85,29 @@ export default {
     return {
       collectionStore: null,
       inputCount: 1,
-      formValues: []
+      formValues: [],
+      hiddenProps: ['createdAt', 'owner', 'updatedAt', 'isEditable', 'selected'],
+      selectAll: false
     }
   },
   computed: {
     ...mapState(['config']),
     ...mapState(['setup'])
+  },
+  watch: {
+    collectionStore () {
+      if (!this.collectionStore) this.getCollectionData()
+    },
+    selectAll (n, o) {
+      if (n !== null && n !== undefined) {
+        this.collectionStore.forEach(e => {
+          e['selected'] = n
+        })
+      }
+    },
+    '$route' () {
+      this.collectionStore = null
+    }
   },
   methods: {
     inputCountMod (param) {
@@ -78,6 +116,51 @@ export default {
       } else if (param === 'dec' && this.inputCount > 0) {
         this.inputCount -= 1
       }
+    },
+    enableEdits () {
+      this.collectionStore.forEach(e => {
+        e['isEditable'] = e['selected']
+      })
+    },
+    editSelected () {
+      this.collectionStore.forEach(e => {
+        if (e['selected']) {
+          ((id, data) => {
+            setTimeout(() => {
+              this.editData(id, data).then(res => {
+                data['selected'] = false
+                this.selectAll = false
+                this.getCollectionData()
+              })
+            }, 0)
+          })(e['id'], e)
+        }
+      })
+    },
+    deleteSelected () {
+      this.collectionStore.forEach(e => {
+        if (e['selected']) {
+          (id => {
+            setTimeout(() => {
+              this.deleteData(id).then(res => {
+                this.getCollectionData()
+              })
+            }, 0)
+          })(e['id'])
+        }
+      })
+    },
+    selectionTrack () {
+      let len = this.collectionStore.length
+      let truthy = this.collectionStore.filter(e => e['selected'] === true).length
+      if (len === truthy) this.selectAll = true
+    },
+    addUIProperties (data) {
+      return data.map(e => {
+        e['isEditable'] = false
+        e['selected'] = false
+        return e
+      })
     },
     getCols () {
       this.formValues = []
@@ -97,23 +180,36 @@ export default {
     getCollectionData () {
       return api.get(`http://localhost:5000/${this.url}`)
         .then(res => {
-          console.log(res.data)
-          this.collectionStore = res.data
+          this.collectionStore = this.addUIProperties(res.data)
+        }).catch(err => {
+          console.log(err)
+          this.collectionStore = []
         })
     },
-    postToCollection () {
-      return api.post(`http://localhost:5000/${this.url}`, this.postData)
+    editData (id, data) {
+      return api.put(`http://localhost:5000/${this.url}/${id}`, data)
         .then(res => {
           console.log(res.data)
-          this.collectionStore = res.data
         })
     },
-    addToDatabase () {
+    deleteData (id) {
+      return api.delete(`http://localhost:5000/${this.url}/${id}`)
+        .then(res => {
+          console.log(res.data)
+          // this.collectionStore = this.addUIProperties(res.data)
+        })
+    },
+    postToCollection (data) {
+      return api.post(`http://localhost:5000/${this.url}`, data)
+        .then(res => {
+          console.log(res)
+        })
+    },
+    requestCreate () {
       let inputs = document.querySelectorAll('#data-form input')
       let reqData = {}
       let reqHolder = []
       for (let i = 0; i <= inputs.length; i++) {
-        console.log(Object.keys(reqData).length)
         if (Object.keys(reqData).length === 3) {
           reqHolder.push(reqData)
           reqData = {}
@@ -124,8 +220,19 @@ export default {
           reqData[inputs[i].name] = inputs[i].value || ''
         }
       }
-      console.log(reqData)
-      console.log(reqHolder)
+      this.addToDatabase(reqHolder)
+    },
+    addToDatabase (reqArr) {
+      let self = this
+      let promiseArr = []
+      for (let req of reqArr) {
+        promiseArr.push(self.postToCollection(req))
+      }
+      Promise.all(promiseArr).then(res => {
+        setTimeout(() => {
+          this.getCollectionData()
+        }, 1000)
+      })
     }
   },
   created () {
