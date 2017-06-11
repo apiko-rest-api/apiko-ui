@@ -27,7 +27,7 @@
               <h1>{{this.$route.params.id}}</h1>
 
               <doc name="collection-data"></doc>
-              <collections-data :url='propertiesLink'/>
+              <collections-data :url='dataTabLink'/>
             </div>
           </div>
         </div>
@@ -50,6 +50,9 @@ export default {
       return '/collections/' + this.$route.params.id + '/data'
     },
     propertiesLink () {
+      return '/collections/' + this.$route.params.id
+    },
+    dataTabLink () {
       return this.$route.params.id
     }
   }
