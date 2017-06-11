@@ -12,7 +12,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .tooltip-parent .tooltip-container {
   display: none;
 }

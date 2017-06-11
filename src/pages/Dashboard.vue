@@ -116,7 +116,6 @@ export default {
           }
         }
       })
-      console.log(result)
       Object.keys(result).forEach((key, i) => {
         let obj = {
           label: key,
